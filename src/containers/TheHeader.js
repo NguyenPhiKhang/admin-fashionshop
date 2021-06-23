@@ -22,19 +22,24 @@ import {
   TheHeaderDropdownNotif,
   TheHeaderDropdownTasks
 }  from './index'
+import { SET_STATE_NAV } from 'src/redux/actions/NavAction'
 
 const TheHeader = () => {
   const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.sidebarShow)
+  const sidebarShow = useSelector(state => state.nav.sidebarShow)
 
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
+    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive';
+    console.log("toggleSidebar");
+    console.log(val)
+    dispatch({type: SET_STATE_NAV, sidebarShow: val})
   }
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
+    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive';
+    console.log("toggleSidebarMobile");
+    console.log(val)
+    dispatch({type: SET_STATE_NAV, sidebarShow: val})
   }
 
   return (

@@ -16,23 +16,18 @@ import CIcon from '@coreui/icons-react'
 
 // sidebar nav config
 import navigation from './_nav'
+import { SET_STATE_NAV } from 'src/redux/actions/NavAction'
 
 const TheSidebar = () => {
   const dispatch = useDispatch()
-  const show = useSelector(state => state.sidebarShow)
+  const show = useSelector(state => state.nav.sidebarShow)
 
   return (
     <CSidebar
       show={show}
-      onShowChange={(val) => dispatch({ type: 'set', sidebarShow: val })}
+      onShowChange={(val) => dispatch({ type: SET_STATE_NAV, sidebarShow: val })}
     >
       <CSidebarBrand className="d-md-down-none" to="/">
-        {/* <CIcon
-          className="c-sidebar-brand-full"
-          name="logo-negative"
-          // src={"logo/FASHION2K.png"}
-          height={35}
-        /> */}
 
         <div className="c-sidebar-brand-full" style={{ display: "flex", alignItems: 'center' }}>
           <img src={'logo/logo.png'} className="c-sidebar-brand-full" style={{ height: 35, width: 54 }} alt="icon-logo"/>

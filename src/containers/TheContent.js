@@ -29,7 +29,7 @@ const TheContent = () => {
                   exact={route.exact}
                   name={route.name}
                   render={props => (
-                    <CFade timeout={1.0}>
+                    <CFade>
                       <route.component {...props} />
                     </CFade>
                   )} />
