@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import {connect } from 'react-redux'
 import {
   CCreateElement,
   CSidebar,
@@ -12,20 +12,23 @@ import {
   CSidebarNavItem,
 } from '@coreui/react'
 
+import PropTypes from 'prop-types';
+
 import CIcon from '@coreui/icons-react'
+
+import {setStateNav} from '../redux/actions/NavAction';
 
 // sidebar nav config
 import navigation from './_nav'
-import { SET_STATE_NAV } from 'src/redux/actions/NavAction'
+import { SET_STATE_NAV } from 'src/redux/const/NavConst'
 
-const TheSidebar = () => {
-  const dispatch = useDispatch()
-  const show = useSelector(state => state.nav.sidebarShow)
+const TheSidebar = (props) => {
+  const show = props.stateNav;
 
   return (
     <CSidebar
       show={show}
-      onShowChange={(val) => dispatch({ type: SET_STATE_NAV, sidebarShow: val })}
+      onShowChange={(val) => props.setStateNav({ type: SET_STATE_NAV, sidebarShow: val })}
     >
       <CSidebarBrand className="d-md-down-none" to="/">
 
@@ -58,4 +61,13 @@ const TheSidebar = () => {
   )
 }
 
-export default React.memo(TheSidebar)
+const mapStateToProps = state => ({
+  setStateNav: PropTypes.func.isRequired,
+  stateNav: state.nav.sidebarShow
+});
+
+const mapDispatchToProps = dispatch => {
+  return { setStateNav: (data) => dispatch(setStateNav(data)) }
+}
+
+export default React.memo(connect(mapStateToProps, mapDispatchToProps)(TheSidebar))

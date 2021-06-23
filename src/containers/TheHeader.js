@@ -1,5 +1,6 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import {connect } from 'react-redux'
+import PropStyles from 'prop-types';
 import {
   CHeader,
   CToggler,
@@ -22,24 +23,20 @@ import {
   TheHeaderDropdownNotif,
   TheHeaderDropdownTasks
 }  from './index'
-import { SET_STATE_NAV } from 'src/redux/actions/NavAction'
+import { SET_STATE_NAV } from 'src/redux/const/NavConst'
+import { setStateNav } from 'src/redux/actions/NavAction';
 
-const TheHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.nav.sidebarShow)
+const TheHeader = (props) => {
+  const sidebarShow = props.stateNav;
 
   const toggleSidebar = () => {
     const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive';
-    console.log("toggleSidebar");
-    console.log(val)
-    dispatch({type: SET_STATE_NAV, sidebarShow: val})
+    props.setStateNav({type: SET_STATE_NAV, sidebarShow: val})
   }
 
   const toggleSidebarMobile = () => {
     const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive';
-    console.log("toggleSidebarMobile");
-    console.log(val)
-    dispatch({type: SET_STATE_NAV, sidebarShow: val})
+    props.setStateNav({type: SET_STATE_NAV, sidebarShow: val})
   }
 
   return (
@@ -102,4 +99,13 @@ const TheHeader = () => {
   )
 }
 
-export default TheHeader
+const mapStateToProps = state => ({
+  setStateNav: PropStyles.func.isRequired,
+  stateNav: state.nav.sidebarShow
+});
+
+const mapDispatchToProps = dispatch => {
+  return { setStateNav: (data) => dispatch(setStateNav(data)) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TheHeader);

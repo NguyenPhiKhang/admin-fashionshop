@@ -1,12 +1,7 @@
-export const SET_STATE_NAV = "SET_STATE_NAV";
+import { SET_STATE_NAV } from "../const/NavConst";
 
-export const getProductList = (data) =>
-// {
-//     axios.get("/api/customer/get-list").then(res => {
-//         dispatch(
+export const setStateNav = (data) =>
 ({
     type: SET_STATE_NAV,
     payload: data
 })
-    // })
-// }
