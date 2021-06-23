@@ -9,6 +9,7 @@ const NavReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_STATE_NAV:
             let data = { ...state, ...action.payload };
+            console.log(data);
             return data;
         default:
             return state

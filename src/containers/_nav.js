@@ -1,12 +1,13 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
+// import React from 'react'
+// import CIcon from '@coreui/icons-react'
 
 const _nav = [
   {
     _tag: 'CSidebarNavItem',
-    name: 'Dashboard',
+    name: 'Thống kê',
     to: '/dashboard',
-    icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon" />,
+    // icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon" />,
+    icon: 'cil-bar-chart'
     // badge: {
     //   color: 'info',
     //   text: 'NEW',
@@ -20,9 +21,9 @@ const _nav = [
 
   {
     _tag: 'CSidebarNavDropdown',
-    name: 'Sản phẩm',
+    name: 'Quản lý sản phẩm',
     route: '/products',
-    icon: 'cil-puzzle',
+    icon: 'cib-codesandbox',
     _children: [
       {
         _tag: 'CSidebarNavItem',
@@ -33,10 +34,67 @@ const _nav = [
         _tag: 'CSidebarNavItem',
         name: 'Thêm mới sản phẩm',
         to: '/products/add-new-products',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Flash sale',
+        to: '/products/flash-sale'
       }
     ]
   },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Quản lý danh mục',
+    route: '/categories',
+    icon: 'cil-border-all',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Tất cả danh mục',
+        to: '/categories/all-categories',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Thêm mới danh mục',
+        to: '/products/add-new-category',
+      }
+    ]
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Quản lý đơn hàng',
+    route: '/orders',
+    icon: 'cil-basket'
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Quản lý bài đăng',
+    route: '/post',
+    icon: 'cil-pencil'
+  },
 
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Phân quyền']
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Quản lý nhân viên',
+    route: '/employees',
+    icon: 'cil-user',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Tất cả nhân viên',
+        to: '/employees/all',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Thêm mới nhân viên',
+        to: '/employees/add-new-employee',
+      }
+    ]
+  },
 
   {
     _tag: 'CSidebarNavTitle',
