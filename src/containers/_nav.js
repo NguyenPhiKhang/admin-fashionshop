@@ -81,7 +81,7 @@ const _nav = [
     _tag: 'CSidebarNavDropdown',
     name: 'Quản lý nhân viên',
     route: '/employees',
-    icon: 'cil-user',
+    icon: 'cib-opsgenie',
     _children: [
       {
         _tag: 'CSidebarNavItem',
@@ -92,6 +92,24 @@ const _nav = [
         _tag: 'CSidebarNavItem',
         name: 'Thêm mới nhân viên',
         to: '/employees/add-new-employee',
+      }
+    ]
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Quản lý người dùng',
+    route: '/users',
+    icon: 'cil-user',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Tất cả người dùng',
+        to: '/users/all',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Thêm mới người dùng',
+        to: '/users/add-new-user',
       }
     ]
   },

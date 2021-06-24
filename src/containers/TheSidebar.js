@@ -1,5 +1,5 @@
 import React from 'react'
-import {connect } from 'react-redux'
+import { connect } from 'react-redux'
 import {
   CCreateElement,
   CSidebar,
@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 
 import CIcon from '@coreui/icons-react'
 
-import {setStateNav} from '../redux/actions/NavAction';
+import { setStateNav } from '../redux/actions/NavAction';
 
 // sidebar nav config
 import navigation from './_nav'
@@ -33,8 +33,8 @@ const TheSidebar = (props) => {
       <CSidebarBrand className="d-md-down-none" to="/">
 
         <div className="c-sidebar-brand-full" style={{ display: "flex", alignItems: 'center' }}>
-          <img src={'logo/logo.png'} className="c-sidebar-brand-full" style={{ height: 35, width: 54 }} alt="icon-logo"/>
-          <img src={'logo/FASHION2K.png'} className="c-sidebar-brand-full" style={{ height: 45}} alt="text-logo"/>
+          <img src={'logo/logo.png'} className="c-sidebar-brand-full" style={{ height: 35, width: 54 }} alt="icon-logo" />
+          <img src={'logo/FASHION2K.png'} className="c-sidebar-brand-full" style={{ height: 45 }} alt="text-logo" />
         </div>
 
         <CIcon

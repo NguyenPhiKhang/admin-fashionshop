@@ -28,7 +28,8 @@ import {
   cibGooglePay,
   cibCcAmex,
   cibProductHunt,
-  cibCodesandbox
+  cibCodesandbox,
+  cibOpsgenie
 } from '@coreui/icons'
 import {
   cifUs,
@@ -131,7 +132,9 @@ import {
   cilXCircle,
   cilWarning,
   cilBorderAll,
-  cilBarChart
+  cilBarChart,
+  cilFilter,
+  cilPen
 } from '@coreui/icons'
 
 export const icons = Object.assign({}, {
@@ -231,7 +234,10 @@ export const icons = Object.assign({}, {
   cilXCircle,
   cilWarning,
   cilBorderAll,
-  cilBarChart
+  cilBarChart,
+  cilFilter,
+  cilPen
+  
 }, {
   cifUs,
   cifBr,
@@ -265,5 +271,6 @@ export const icons = Object.assign({}, {
   cibGooglePay,
   cibCcAmex,
   cibProductHunt,
-  cibCodesandbox
+  cibCodesandbox,
+  cibOpsgenie
 })
