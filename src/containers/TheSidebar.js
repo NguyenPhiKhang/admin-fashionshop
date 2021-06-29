@@ -34,7 +34,7 @@ const TheSidebar = (props) => {
 
         <div className="c-sidebar-brand-full" style={{ display: "flex", alignItems: 'center' }}>
           <img src={'logo/logo.png'} className="c-sidebar-brand-full" style={{ height: 35, width: 54 }} alt="icon-logo" />
-          <img src={'logo/FASHION2K.png'} className="c-sidebar-brand-full" style={{ height: 45 }} alt="text-logo" />
+          <img src={'logo/FAIIKAN.png'} className="c-sidebar-brand-full" style={{ height: 45 }} alt="text-logo" />
         </div>
 
         <CIcon

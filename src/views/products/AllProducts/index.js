@@ -32,12 +32,12 @@ const getBadge = status => {
 }
 const fields = [
   { key: 'id', label: 'Id', _style: { width: '5%' }},
-  { key: 'name', label: 'Tên sản phẩm', _style: { width: '35%' } },
+  { key: 'name', label: 'Tên sản phẩm', _style: { width: '28%' } },
   { key: 'category', label: 'Danh mục', _style: { width: '20%' }},
   { key: 'img_url', label: 'Ảnh' , _style: { width: '10%' }},
   { key: 'price', label: 'Giá', _style: { width: '10%' }},
-  { key: 'quantity', label: 'Tồn kho', _style: { width: '5%' }},
-  { key: 'order_count', label: 'Đã bán', _style: { width: '5%' } },
+  { key: 'quantity', label: 'Tồn kho', _style: { width: '8%' }},
+  { key: 'order_count', label: 'Đã bán', _style: { width: '8%' } },
   { key: 'action', label: 'Action', _style: { width: '10%' }}
 ]
 
@@ -46,17 +46,13 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const loadSpots = async () => {
+    const loadAllProduct = async () => {
       const response = await axios.get("http://localhost:8080/api/v1/cat/259/products?filter=new&p=1");
       const data = await response.data;
-      console.log(data)
       setProducts(data);
-      // await getProductList(data);
-      // setRows(data);
-      // console.log(product.productList)
     };
 
-    loadSpots();
+    loadAllProduct();
   }, [])
 
   return (
@@ -67,7 +63,7 @@ const AllProducts = () => {
             <CCardHeader>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <h3>Tất cả sản phẩm</h3>
-                <CButton size="sm" className="btn-filter btn-brand mr-1 mb-1"><CIcon size='xl' name="cil-filter" /></CButton>
+                <CButton className="btn-create btn-brand mr-1 mb-1"><CIcon name="cil-plus" /><span className="mfs-2">Nhập hàng</span></CButton>
               </div>
             </CCardHeader>
             <CCardBody>

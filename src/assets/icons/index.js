@@ -134,7 +134,8 @@ import {
   cilBorderAll,
   cilBarChart,
   cilFilter,
-  cilPen
+  cilPen,
+  cilPlus,
 } from '@coreui/icons'
 
 export const icons = Object.assign({}, {
@@ -236,8 +237,8 @@ export const icons = Object.assign({}, {
   cilBorderAll,
   cilBarChart,
   cilFilter,
-  cilPen
-  
+  cilPen,
+  cilPlus,
 }, {
   cifUs,
   cifBr,

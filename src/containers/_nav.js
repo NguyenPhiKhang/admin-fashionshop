@@ -39,7 +39,17 @@ const _nav = [
         _tag: 'CSidebarNavItem',
         name: 'Flash sale',
         to: '/products/flash-sale'
-      }
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Thương hiệu',
+        to: '/products/brand'
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Voucher',
+        to: '/products/voucher'
+      },
     ]
   },
   {
