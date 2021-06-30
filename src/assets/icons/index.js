@@ -29,7 +29,7 @@ import {
   cibCcAmex,
   cibProductHunt,
   cibCodesandbox,
-  cibOpsgenie
+  cibOpsgenie,
 } from '@coreui/icons'
 import {
   cifUs,
@@ -136,6 +136,7 @@ import {
   cilFilter,
   cilPen,
   cilPlus,
+  cilReload
 } from '@coreui/icons'
 
 export const icons = Object.assign({}, {
@@ -239,6 +240,7 @@ export const icons = Object.assign({}, {
   cilFilter,
   cilPen,
   cilPlus,
+  cilReload
 }, {
   cifUs,
   cifBr,
