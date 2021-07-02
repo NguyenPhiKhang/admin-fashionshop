@@ -7,10 +7,14 @@ import {
   CCardHeader,
   CCol,
   CDataTable,
-  CRow
+  CRow,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
 } from '@coreui/react'
 
-import usersData from '../../users/UsersData'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios';
 import {
@@ -20,6 +24,9 @@ import {
 
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
+import AddNewProduct from '../AddNewProduct';
+// import Modal from 'src/components/Modal/Modal';
+// import Modal2 from 'src/components/Modal/Modal2';
 
 const getBadge = status => {
   switch (status) {
@@ -31,19 +38,20 @@ const getBadge = status => {
   }
 }
 const fields = [
-  { key: 'id', label: 'Id', _style: { width: '5%' }},
-  { key: 'name', label: 'Tên sản phẩm', _style: { width: '28%' } },
-  { key: 'category', label: 'Danh mục', _style: { width: '20%' }},
-  { key: 'img_url', label: 'Ảnh' , _style: { width: '10%' }},
-  { key: 'price', label: 'Giá', _style: { width: '10%' }},
-  { key: 'quantity', label: 'Tồn kho', _style: { width: '8%' }},
+  { key: 'id', label: 'Id', _style: { width: '5%' } },
+  { key: 'name', label: 'Tên sản phẩm', _style: { width: '23%' } },
+  { key: 'img_url', label: 'Ảnh', _style: { width: '10%' } },
+  { key: 'category', label: 'Danh mục', _style: { width: '20%' } },
+  { key: 'price', label: 'Giá', _style: { width: '15%' } },
+  { key: 'quantity', label: 'Tồn kho', _style: { width: '8%' } },
   { key: 'order_count', label: 'Đã bán', _style: { width: '8%' } },
-  { key: 'action', label: 'Action', _style: { width: '10%' }}
+  { key: 'action', label: 'Action', _style: { width: '10%' } }
 ]
 
 const AllProducts = () => {
 
   const [products, setProducts] = useState([]);
+  const [visibleModal, setVisibleModal] = useState(false);
 
   useEffect(() => {
     const loadAllProduct = async () => {
@@ -55,6 +63,16 @@ const AllProducts = () => {
     loadAllProduct();
   }, [])
 
+
+  // const handleAddProduct = () => {
+  //   setVisibleModal(true);
+  // }
+
+
+  const toggle = () => {
+    setVisibleModal(prev => !prev);
+  }
+
   return (
     <>
       <CRow>
@@ -63,7 +81,7 @@ const AllProducts = () => {
             <CCardHeader>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <h3>Tất cả sản phẩm</h3>
-                <CButton className="btn-create btn-brand mr-1 mb-1"><CIcon name="cil-plus" /><span className="mfs-2">Nhập hàng</span></CButton>
+                <CButton className="btn-create btn-brand mr-1 mb-1" onClick={toggle}><CIcon name="cil-plus" /><span className="mfs-2">Nhập hàng</span></CButton>
               </div>
             </CCardHeader>
             <CCardBody>
@@ -72,16 +90,16 @@ const AllProducts = () => {
                 fields={fields}
                 itemsPerPage={5}
                 pagination
-                sorter = {false}
+                sorter={false}
                 scopedSlots={{
                   'action':
                     (item) => (
-                      <td style={{display: 'flex', alignItems: 'center', height: 97}}>
-                        <IconButton style={{outline: 'none'}} title="Xem chi tiết">
-                          <VisibilityOutlinedIcon style={{fontSize: 20}}/>
+                      <td style={{ display: 'flex', alignItems: 'center', height: 97 }}>
+                        <IconButton style={{ outline: 'none' }} title="Xem chi tiết">
+                          <VisibilityOutlinedIcon style={{ fontSize: 20 }} />
                         </IconButton>
-                        <IconButton style={{outline: 'none'}} title="Sửa">
-                          <CreateOutlinedIcon style={{fontSize: 20, color: 'rgb(13, 93, 241)'}}/>
+                        <IconButton style={{ outline: 'none' }} title="Sửa">
+                          <CreateOutlinedIcon style={{ fontSize: 20, color: 'rgb(13, 93, 241)' }} />
                         </IconButton>
                       </td>
                     ),
@@ -99,38 +117,55 @@ const AllProducts = () => {
                         }
                       </td>
                     ),
-                    'name':
+                  'name':
                     (item) => (
                       <td className="td-middle">
                         {item.name}
                       </td>
                     ),
-                    'id':
+                  'id':
                     (item) => (
                       <td className="td-middle">
                         {item.id}
                       </td>
                     ),
-                    'quantity':
+                  'quantity':
                     (item) => (
                       <td className="td-middle">
                         {item.quantity}
                       </td>
                     ),
-                    'order_count':
+                  'order_count':
                     (item) => (
                       <td className="td-middle">
                         {item.order_count}
                       </td>
                     ),
-                    'img_url':
+                  'img_url':
                     (item) => (
                       <td className="td-middle">
-                        <img src={item.img_url} alt="imgae_product" width='50'/>
+                        <img src={item.img_url} alt="imgae_product" width='50' />
                       </td>
                     ),
                 }}
               />
+              <CModal
+                scrollable
+                show={visibleModal}
+                onClose={toggle}
+                size="xl"
+              >
+                <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <CModalTitle>Thêm sản phẩm</CModalTitle>
+                  <CButton onClick={toggle}><CIcon name='cil-x' size="sm" /></CButton>
+                </CModalHeader>
+                <CModalBody>
+                  <AddNewProduct isHeader={false} />
+                </CModalBody>
+                <CModalFooter>
+                  <CButton color="secondary" onClick={toggle}>Đóng</CButton>
+                </CModalFooter>
+              </CModal>
             </CCardBody>
           </CCard>
         </CCol>
@@ -138,5 +173,4 @@ const AllProducts = () => {
     </>
   )
 }
-
 export default AllProducts
