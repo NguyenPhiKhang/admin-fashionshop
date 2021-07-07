@@ -28,15 +28,9 @@ import AddNewProduct from '../AddNewProduct';
 // import Modal from 'src/components/Modal/Modal';
 // import Modal2 from 'src/components/Modal/Modal2';
 
-const getBadge = status => {
-  switch (status) {
-    case 'Active': return 'success'
-    case 'Inactive': return 'secondary'
-    case 'Pending': return 'warning'
-    case 'Banned': return 'danger'
-    default: return 'primary'
-  }
-}
+import './allProduct.css'
+import EditProduct from '../EditProduct';
+
 const fields = [
   { key: 'id', label: 'Id', _style: { width: '5%' } },
   { key: 'name', label: 'Tên sản phẩm', _style: { width: '23%' } },
@@ -52,6 +46,7 @@ const AllProducts = () => {
 
   const [products, setProducts] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [editModal, setEditModal] = useState({ visible: false, mode: 'detail', id: 0 });
 
   useEffect(() => {
     const loadAllProduct = async () => {
@@ -63,14 +58,12 @@ const AllProducts = () => {
     loadAllProduct();
   }, [])
 
-
-  // const handleAddProduct = () => {
-  //   setVisibleModal(true);
-  // }
-
-
   const toggle = () => {
     setVisibleModal(prev => !prev);
+  }
+
+  const toggleEdit = (id, mode) => {
+    setEditModal(prev => ({ id: id, mode: mode, visible: !prev.visible }));
   }
 
   return (
@@ -95,10 +88,10 @@ const AllProducts = () => {
                   'action':
                     (item) => (
                       <td style={{ display: 'flex', alignItems: 'center', height: 97 }}>
-                        <IconButton style={{ outline: 'none' }} title="Xem chi tiết">
+                        <IconButton style={{ outline: 'none' }} title="Xem chi tiết" onClick={() => { toggleEdit(item.id, "detail") }}>
                           <VisibilityOutlinedIcon style={{ fontSize: 20 }} />
                         </IconButton>
-                        <IconButton style={{ outline: 'none' }} title="Sửa">
+                        <IconButton style={{ outline: 'none' }} title="Sửa" onClick={() => { toggleEdit(item.id, "edit") }}>
                           <CreateOutlinedIcon style={{ fontSize: 20, color: 'rgb(13, 93, 241)' }} />
                         </IconButton>
                       </td>
@@ -149,11 +142,13 @@ const AllProducts = () => {
                     ),
                 }}
               />
+
               <CModal
                 scrollable
                 show={visibleModal}
                 onClose={toggle}
                 size="xl"
+                className="inactive-modal"
               >
                 <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <CModalTitle>Thêm sản phẩm</CModalTitle>
@@ -164,6 +159,25 @@ const AllProducts = () => {
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggle}>Đóng</CButton>
+                </CModalFooter>
+              </CModal>
+
+              <CModal
+                scrollable
+                show={editModal.visible}
+                onClose={toggleEdit}
+                size="xl"
+                className="inactive-modal"
+              >
+                <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <CModalTitle>{editModal.mode==="edit"?"Sửa sản phẩm": "Chi tiết sản phẩm"}</CModalTitle>
+                  <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
+                </CModalHeader>
+                <CModalBody>
+                  <EditProduct productId={editModal.id} mode={editModal.mode}/>
+                </CModalBody>
+                <CModalFooter>
+                  <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>
                 </CModalFooter>
               </CModal>
             </CCardBody>

@@ -34,7 +34,6 @@ const AddNewProduct = props => {
   const [showElements, setShowElements] = useState(true)
   const [brands, setBrands] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [radioCategory, setRadioCategory] = useState(16);
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [isOption, setIsOption] = useState(true);
@@ -54,19 +53,19 @@ const AddNewProduct = props => {
 
   useEffect(() => {
     loadBrand();
-    loadSubCategories();
+    loadSubCategories(16);
     loadColor();
     loadSize();
-  }, [radioCategory])
+  }, [])
 
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data);
+    setBrands(data.concat({id: -1, name: "Khác"}));
   };
 
-  const loadSubCategories = async () => {
-    const response = await axios.get(`http://localhost:8080/api/v1/categories/${radioCategory}/sub-categories`);
+  const loadSubCategories = async (idCategory) => {
+    const response = await axios.get(`http://localhost:8080/api/v1/categories/${idCategory}/sub-categories`);
     const data = await response.data;
     let subCategoriesNew = [];
     updateDataSubCategories(data, subCategoriesNew);
@@ -93,8 +92,6 @@ const AddNewProduct = props => {
         updateDataSubCategories(v.categories, subCategoriesNew);
       }
     })
-
-    console.log(subCategories)
   }
 
   const onSubmit = (e) => {
@@ -121,6 +118,10 @@ const AddNewProduct = props => {
     else setFileList(filess);
 
     setLoadingImage(false);
+  }
+
+  const handleChangeRadioCategory = (value)=>{
+    loadSubCategories(value);
   }
 
   const handleCancel = () => setPreview({ visible: false });
@@ -409,7 +410,7 @@ const AddNewProduct = props => {
                   <CCol md="3">
                     <CLabel>Danh mục</CLabel>
                   </CCol>
-                  <CCol md="9" onChange={(e) => { setRadioCategory(e.target.value) }}>
+                  <CCol md="9" onChange={(e) => { handleChangeRadioCategory(e.target.value) }}>
                     <CFormGroup variant="custom-radio" inline>
                       <CInputRadio custom id="radio-ttnam" name="inline-radios" value={16} defaultChecked />
                       <CLabel variant="custom-checkbox" htmlFor="radio-ttnam">Thời trang nam</CLabel>
@@ -548,7 +549,7 @@ const AddNewProduct = props => {
                 {
                   optionComponent()
                 }
-                <CButton color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
+                <CButton style={{ display: !isColor && !isSize ? "none" : "flex"}} color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
                   <CIcon name="cil-plus" size="sm" />
                   Thêm Option
                 </CButton>

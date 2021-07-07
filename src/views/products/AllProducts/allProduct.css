@@ -1,0 +1,4 @@
+.inactive-modal {
+  pointer-events: none;
+  position: fixed;
+}
