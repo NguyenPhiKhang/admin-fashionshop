@@ -501,11 +501,10 @@ const EditProduct = props => {
                     </CCol>
                     <CCol sm="9" style={{ display: 'flex', alignItems: 'center' }}>
                       <CSwitch
-                        className="disable-detail"
+                        className="disable-detail mx-1"
                         disabled={modeView === "edit" ? false : true}
                         id="free_ship"
                         name="free_ship"
-                        className={'mx-1'}
                         variant={'3d'}
                         color={'primary'}
                         // defaultChecked

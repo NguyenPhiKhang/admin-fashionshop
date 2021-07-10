@@ -13,6 +13,8 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
+  CInput,
+  CFormGroup,
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -25,8 +27,6 @@ import {
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import AddNewProduct from '../AddNewProduct';
-// import Modal from 'src/components/Modal/Modal';
-// import Modal2 from 'src/components/Modal/Modal2';
 
 import './allProduct.css'
 import EditProduct from '../EditProduct';
@@ -69,13 +69,23 @@ const AllProducts = () => {
   return (
     <>
       <CRow>
-        <CCol>
+        <CCol xs="12" sm="12" md="12">
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+            <h3 style={{fontWeight: "bold"}}>Tất cả sản phẩm</h3>
+            <CButton className="btn-create btn-brand mr-1 mb-1" onClick={toggle}><CIcon name="cil-plus" /><span className="mfs-2">Nhập hàng</span></CButton>
+          </div>
+        </CCol>
+        <CCol xs="12" sm="12" md="12">
           <CCard>
-            <CCardHeader>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h3>Tất cả sản phẩm</h3>
-                <CButton className="btn-create btn-brand mr-1 mb-1" onClick={toggle}><CIcon name="cil-plus" /><span className="mfs-2">Nhập hàng</span></CButton>
-              </div>
+            <CCardHeader >
+              <CFormGroup row style={{marginTop: 10, marginBottom: 10}}>
+                <CCol xs="12" sm="4">
+                  <CInput size="normal" id="searchProduct" name="searchProduct" placeholder="Tìm kiếm sản phẩm..." />
+                </CCol>
+                <CCol xs="12">
+
+                </CCol>
+              </CFormGroup>
             </CCardHeader>
             <CCardBody>
               <CDataTable
@@ -170,11 +180,11 @@ const AllProducts = () => {
                 className="inactive-modal"
               >
                 <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <CModalTitle>{editModal.mode==="edit"?"Sửa sản phẩm": "Chi tiết sản phẩm"}</CModalTitle>
+                  <CModalTitle>{editModal.mode === "edit" ? "Sửa sản phẩm" : "Chi tiết sản phẩm"}</CModalTitle>
                   <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditProduct productId={editModal.id} mode={editModal.mode}/>
+                  <EditProduct productId={editModal.id} mode={editModal.mode} />
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>

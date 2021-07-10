@@ -21,6 +21,11 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
+  CInputGroup,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
@@ -28,15 +33,13 @@ import axios from 'axios'
 import swal from 'sweetalert';
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
 import { getBase64 } from 'src/utils/ImageConst';
+import CategoriesComponent from 'src/components/Categories';
+import http from 'src/utils/http-common';
 
 const AddNewProduct = props => {
-  const [collapsed, setCollapsed] = useState(true)
-  const [showElements, setShowElements] = useState(true)
   const [brands, setBrands] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
-  const [isOption, setIsOption] = useState(true);
   const [fileList, setFileList] = useState([]);
   const [preview, setPreview] = useState({ visible: false, image: '', title: '' });
   const [loadingImage, setLoadingImage] = useState(false);
@@ -48,29 +51,51 @@ const AddNewProduct = props => {
     name: '', description: '', short_description: '', highlight: '',
     discount: 0, isFreeship: false, category: 0, brand: 0,
     material: '', style: '', season: '', madein: '', purpose: ''
-  })
+  });
+
+  const [expanded, setExpanded] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [pathCategory, setPathCategory] = useState({});
 
 
   useEffect(() => {
     loadBrand();
-    loadSubCategories(16);
     loadColor();
     loadSize();
   }, [])
 
+  const handleToggle = (event, nodeIds) => {
+    // setExpanded(nodeIds);
+  };
+
+  const handleSelect = async (event, nodeIds) => {
+    let index = expanded.indexOf(nodeIds);
+
+    if (index > -1) {
+      setExpanded(prev => prev.slice(index + 1, prev.length - index));
+    } else {
+      const path = await findPathCategories(nodeIds);
+      
+      if (path.subCategory)
+        setExpanded(path.categoryIds);
+      else {
+        setPathCategory(path);
+        setSelected(nodeIds);
+      };
+    }
+  };
+
+  const findPathCategories = async (id) => {
+    const response = await http.get(`/category/${id}/get-path`);
+    const data = response.data;
+    return data;
+  }
+
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data.concat({id: -1, name: "Khác"}));
+    setBrands(data.concat({ id: -1, name: "Khác" }));
   };
-
-  const loadSubCategories = async (idCategory) => {
-    const response = await axios.get(`http://localhost:8080/api/v1/categories/${idCategory}/sub-categories`);
-    const data = await response.data;
-    let subCategoriesNew = [];
-    updateDataSubCategories(data, subCategoriesNew);
-    setSubCategories(subCategoriesNew);
-  }
 
   const loadColor = async () => {
     const response = await axios.get(`http://localhost:8080/api/v1/option-varchar/80/get-by-attr`);
@@ -118,10 +143,6 @@ const AddNewProduct = props => {
     else setFileList(filess);
 
     setLoadingImage(false);
-  }
-
-  const handleChangeRadioCategory = (value)=>{
-    loadSubCategories(value);
   }
 
   const handleCancel = () => setPreview({ visible: false });
@@ -214,7 +235,7 @@ const AddNewProduct = props => {
     listOptions.map((value, index) => {
       // console.log(value)
       components.push(
-        <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, display: isOption ? 'flex' : 'none', marginBottom: '8px' }}>
+        <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, marginBottom: '8px' }}>
           <CCol xs="3" style={{ display: isColor ? "flex" : "none" }}>
             <CFormGroup>
               <CLabel htmlFor="color">Màu sắc</CLabel>
@@ -286,15 +307,15 @@ const AddNewProduct = props => {
                   <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
                 </Modal> */}
                 <CModal
-                    scrollable
-                    show={preview.visible}
-                    onClose={handleCancel}
-                    // color="info"
-                  >
-                    <CModalHeader style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                      <CModalTitle>{preview.title}</CModalTitle>
-                      <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm"/></CButton>
-                    </CModalHeader>
+                  scrollable
+                  show={preview.visible}
+                  onClose={handleCancel}
+                // color="info"
+                >
+                  <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <CModalTitle>{preview.title}</CModalTitle>
+                    <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
+                  </CModalHeader>
                   <CModalBody>
                     <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
                   </CModalBody>
@@ -322,10 +343,13 @@ const AddNewProduct = props => {
     <>
       <CForm className="form-horizontal" onSubmit={(e) => { onSubmit(e) }}>
         <CRow>
+          <CCol xs="12" sm="12" md="12" style={{ display: props.isHeader ? "block" : "none" }}>
+            <h3 style={{ marginBottom: 20, fontWeight: "bold" }}>Thêm sản phẩm</h3>
+          </CCol>
           <CCol xs="12" sm="6" md="7">
             <CCard>
-              <CCardHeader style={{ display: props.isHeader ? "block" : "none" }}>
-                <h3>Thêm sản phẩm</h3>
+              <CCardHeader>
+                <p style={{ fontSize: 15, fontWeight: "bold", marginBottom: 0 }}>Thông tin chung</p>
               </CCardHeader>
               <CCardBody>
                 <CFormGroup row>
@@ -410,33 +434,18 @@ const AddNewProduct = props => {
                   <CCol md="3">
                     <CLabel>Danh mục</CLabel>
                   </CCol>
-                  <CCol md="9" onChange={(e) => { handleChangeRadioCategory(e.target.value) }}>
-                    <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="radio-ttnam" name="inline-radios" value={16} defaultChecked />
-                      <CLabel variant="custom-checkbox" htmlFor="radio-ttnam">Thời trang nam</CLabel>
-                    </CFormGroup>
-                    <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="radio-ttnu" name="inline-radios" value={17} />
-                      <CLabel variant="custom-checkbox" htmlFor="radio-ttnu">Thời trang nữ</CLabel>
-                    </CFormGroup>
-                    <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="radio-lamdep" name="inline-radios" value={324} />
-                      <CLabel variant="custom-checkbox" htmlFor="radio-lamdep">Làm đẹp</CLabel>
-                    </CFormGroup>
-                  </CCol>
-                </CFormGroup>
-                <CFormGroup row>
-                  <CCol md="3">
-                    <CLabel htmlFor="sub_cateogires">Danh mục con</CLabel>
-                  </CCol>
                   <CCol xs="12" md="9">
-                    <CSelect custom name="sub-categories" id="sub-cateogories" value={attributes.category} onChange={(e) => { handleChangeAtrribute({ category: e.target.value }) }}>
-
-                      <option value="0" key={0}>Chọn danh mục con</option>
-                      {
-                        subCategories.map(v => <option value={v.id} key={v.id}>{v.name}</option>)
-                      }
-                    </CSelect>
+                    <CInputGroup>
+                      <CDropdown className="input-group-prepend">
+                        <CDropdownToggle caret color="primary">
+                          Chọn danh mục
+                        </CDropdownToggle>
+                        <CDropdownMenu style={{padding: 20}}>
+                          <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect}/>
+                        </CDropdownMenu>
+                      </CDropdown>
+                      <CInput disabled className="disable-detail" id="category" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
+                    </CInputGroup>
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -499,7 +508,7 @@ const AddNewProduct = props => {
           <CCol xs="12" sm="6" md="5">
             <CCard>
               <CCardHeader>
-                Options
+                <p style={{ fontSize: 15, fontWeight: "bold", marginBottom: 0 }}>Options</p>
               </CCardHeader>
               <CCardBody>
                 <CFormGroup row className="my-0">
@@ -549,7 +558,7 @@ const AddNewProduct = props => {
                 {
                   optionComponent()
                 }
-                <CButton style={{ display: !isColor && !isSize ? "none" : "flex"}} color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
+                <CButton style={{ display: !isColor && !isSize ? "none" : "flex" }} color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
                   <CIcon name="cil-plus" size="sm" />
                   Thêm Option
                 </CButton>
@@ -592,11 +601,11 @@ const AddNewProduct = props => {
                     scrollable
                     show={preview.visible}
                     onClose={handleCancel}
-                    // color="info"
+                  // color="info"
                   >
-                    <CModalHeader style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <CModalTitle>{preview.title}</CModalTitle>
-                      <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm"/></CButton>
+                      <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
                     </CModalHeader>
                     <CModalBody>
                       <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
