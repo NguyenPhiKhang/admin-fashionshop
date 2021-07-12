@@ -283,7 +283,7 @@ const AddNewProduct = props => {
               />
               <CLabel htmlFor="images">Ảnh</CLabel>
               <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                <CButton variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById(`file-multiple-input${value.id}`).click() }}>
+                <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById(`file-multiple-input${value.id}`).click() }}>
                   <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
                 </CButton>
                 {
@@ -576,7 +576,7 @@ const AddNewProduct = props => {
                   </CCol>
                   <CCol md="11">
                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                      <CButton variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById("file-multiple-input").click() }}>
+                      <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById("file-multiple-input").click() }}>
                         <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
                       </CButton>
                       {

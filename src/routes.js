@@ -1,4 +1,5 @@
 import React from 'react';
+import CategoriesPage from './views/products/Categories';
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
@@ -85,6 +86,8 @@ const routes = [
   { path: '/products', exact: true, name: 'Products', component: AllProducts },
   { path: '/products/all-products', name: 'All Products', component: AllProducts },
   { path: '/products/add-new-products', name: 'Add New Products', component: AddNewProducts },
+  { path: '/categories', name: 'Categories', component: CategoriesPage },
+
 ];
 
 export default routes;

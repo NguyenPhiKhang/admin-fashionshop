@@ -34,7 +34,6 @@ import { getBase64 } from 'src/utils/ImageConst';
 
 import http from "../../../utils/http-common";
 // import { FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
-import './editProduct.css';
 import { DeleteOutline } from '@material-ui/icons';
 import CategoriesComponent from 'src/components/Categories';
 
@@ -319,7 +318,7 @@ const EditProduct = props => {
       setExpanded(prev => prev.slice(index + 1, prev.length - index));
     } else {
       const path = await findPathCategories(nodeIds);
-      
+
       if (path.subCategory)
         setExpanded(path.categoryIds);
       else {
@@ -341,7 +340,7 @@ const EditProduct = props => {
       // console.log(value)
       components.push(
         <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, marginBottom: '8px' }}>
-          <CCol  style={{ display: isColor ? "flex" : "none" }}>
+          <CCol style={{ display: isColor ? "flex" : "none" }}>
             <CFormGroup>
               <CLabel htmlFor="color">Màu sắc</CLabel>
               <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="color" id="color" value={value.color} onChange={(e) => { handleChangeOption(value.id, { color: e.target.value }) }}>
@@ -353,7 +352,7 @@ const EditProduct = props => {
               </CSelect>
             </CFormGroup>
           </CCol>
-          <CCol  style={{ display: isSize ? "flex" : 'none' }}>
+          <CCol style={{ display: isSize ? "flex" : 'none' }}>
             <CFormGroup>
               <CLabel htmlFor="size">Kích thước</CLabel>
               <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="size" id="size" value={value.size} onChange={(e) => { handleChangeOption(value.id, { size: e.target.value }) }}>
@@ -390,6 +389,7 @@ const EditProduct = props => {
               <CLabel htmlFor="images">Ảnh</CLabel>
               <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                 <CButton
+                  className="btn-image-plus"
                   variant="outline" color="dark"
                   style={{ width: 80, height: 80, marginBottom: 5, display: modeView === "edit" ? "inline" : "none" }}
                   onClick={() => { document.getElementById(`file-multiple-input${value.id}`).click() }}
@@ -403,7 +403,7 @@ const EditProduct = props => {
                         width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
                         marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
                       }}>
-                        <img alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} className="img-thumbnail-table"/>
+                        <img alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} className="img-thumbnail-table" />
                         <CButton
                           disabled={modeView === "edit" ? false : true}
                           className="button-delete-image" onClick={() => { handleDeleteImage(value.id, index) }}
@@ -559,7 +559,7 @@ const EditProduct = props => {
                   </CCol>
                   <CCol xs="12" md="9">
                     <CInputGroup>
-                      <CDropdown style={{display: modeView === "edit" ? 'flex' : 'none'}} className="input-group-prepend">
+                      <CDropdown style={{ display: modeView === "edit" ? 'flex' : 'none' }} className="input-group-prepend">
                         <CDropdownToggle caret color="primary">
                           Chọn danh mục
                         </CDropdownToggle>
@@ -729,6 +729,7 @@ const EditProduct = props => {
                   <CCol md="11">
                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                       <CButton
+                        className="btn-image-plus"
                         variant="outline" color="dark"
                         style={{ width: 80, height: 80, display: modeView === "edit" ? "inline" : "none" }}
                         onClick={() => { document.getElementById("file-multiple-input").click() }}>

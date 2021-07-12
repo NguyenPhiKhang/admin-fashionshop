@@ -37,6 +37,11 @@ const _nav = [
       },
       {
         _tag: 'CSidebarNavItem',
+        name: 'Danh mục',
+        to: '/categories',
+      },
+      {
+        _tag: 'CSidebarNavItem',
         name: 'Flash sale',
         to: '/products/flash-sale'
       },
@@ -52,24 +57,24 @@ const _nav = [
       },
     ]
   },
-  {
-    _tag: 'CSidebarNavDropdown',
-    name: 'Quản lý danh mục',
-    route: '/categories',
-    icon: 'cil-border-all',
-    _children: [
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Tất cả danh mục',
-        to: '/categories/all-categories',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Thêm mới danh mục',
-        to: '/products/add-new-category',
-      }
-    ]
-  },
+  // {
+  //   _tag: 'CSidebarNavDropdown',
+  //   name: 'Quản lý danh mục',
+  //   route: '/categories',
+  //   icon: 'cil-border-all',
+  //   _children: [
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Tất cả danh mục',
+  //       to: '/categories/all-categories',
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Thêm mới danh mục',
+  //       to: '/products/add-new-category',
+  //     }
+  //   ]
+  // },
   {
     _tag: 'CSidebarNavItem',
     name: 'Quản lý đơn hàng',

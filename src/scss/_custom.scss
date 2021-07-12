@@ -22,7 +22,7 @@
   position: fixed;
 }
 
-.disable-detail:disabled{
+.disable-detail:disabled {
   background-color: white;
   opacity: 1;
 }
@@ -35,4 +35,23 @@
   box-shadow: 0 0.1rem 0.25rem rgb(0 0 0 / 8%);
   max-width: 100%;
   height: auto;
+}
+
+.dropdown-table {
+  background-color: #fff;
+  border-color: rgba(108, 117, 125, 0.25);
+}
+
+.dropdown-table:hover {
+  background-color: #fff;
+  border-color: #adb5bd;
+}
+
+tbody > tr:hover {
+  background-color:  rgba(49, 103, 235, 0.075) !important;
+}
+
+.btn-image-plus:hover{
+  background-color: rgba(44, 56, 74, 0.1);
+  color: #000;
 }

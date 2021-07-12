@@ -31,7 +31,6 @@ import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import AddNewProduct from '../AddNewProduct';
 
-import './allProduct.css'
 import EditProduct from '../EditProduct';
 import http from 'src/utils/http-common';
 
@@ -98,7 +97,7 @@ const AllProducts = () => {
   useEffect(() => {
     console.log("useeffect 3")
     const loadCategories = async () => {
-      const response = await http.get("/categories/get-all");
+      const response = await http.get("/categories/get-all?p=1&p_size=113");
       const data = await response.data;
 
       setCategoriesList(data);

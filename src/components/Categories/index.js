@@ -37,7 +37,7 @@ export default function CategoriesComponent(props) {
             TreeItem key={node.id} nodeId={node.id.toString()}
             label={
               <div>
-                <img style={{ width: '0.875rem', height: 'auto', marginRight: 5 }} src={node.icon} />
+                <img alt="image_node" style={{ width: '0.875rem', height: 'auto', marginRight: 5 }} src={node.icon} />
                 <label>{node.name}</label>
               </div>
             }
