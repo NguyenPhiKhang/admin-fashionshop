@@ -25,7 +25,6 @@ import {
   CDropdown,
   CDropdownToggle,
   CDropdownMenu,
-  CDropdownItem,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
@@ -63,33 +62,6 @@ const AddNewProduct = props => {
     loadColor();
     loadSize();
   }, [])
-
-  const handleToggle = (event, nodeIds) => {
-    // setExpanded(nodeIds);
-  };
-
-  const handleSelect = async (event, nodeIds) => {
-    let index = expanded.indexOf(nodeIds);
-
-    if (index > -1) {
-      setExpanded(prev => prev.slice(index + 1, prev.length - index));
-    } else {
-      const path = await findPathCategories(nodeIds);
-      
-      if (path.subCategory)
-        setExpanded(path.categoryIds);
-      else {
-        setPathCategory(path);
-        setSelected(nodeIds);
-      };
-    }
-  };
-
-  const findPathCategories = async (id) => {
-    const response = await http.get(`/category/${id}/get-path`);
-    const data = response.data;
-    return data;
-  }
 
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
@@ -230,16 +202,43 @@ const AddNewProduct = props => {
     });
   }
 
+  const handleToggle = (event, nodeIds) => {
+    // setExpanded(nodeIds);
+  };
+
+  const handleSelect = async (event, nodeIds) => {
+    let index = expanded.indexOf(nodeIds);
+
+    if (index > -1) {
+      setExpanded(prev => prev.slice(index + 1, prev.length - index));
+    } else {
+      const path = await findPathCategories(nodeIds);
+
+      if (path.subCategory)
+        setExpanded(path.categoryIds);
+      else {
+        setPathCategory(path);
+        setSelected(nodeIds);
+      };
+    }
+  };
+
+  const findPathCategories = async (id) => {
+    const response = await http.get(`/category/${id}/get-path`);
+    const data = response.data;
+    return data;
+  }
+
   const optionComponent = () => {
     var components = [];
     listOptions.map((value, index) => {
       // console.log(value)
       components.push(
         <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, marginBottom: '8px' }}>
-          <CCol xs="3" style={{ display: isColor ? "flex" : "none" }}>
+          <CCol style={{ display: isColor ? "flex" : "none" }}>
             <CFormGroup>
               <CLabel htmlFor="color">Màu sắc</CLabel>
-              <CSelect custom name="color" id="color" value={value.color} onChange={(e) => { handleChangeOption(value.id, { color: e.target.value }) }}>
+              <CSelect custom name="color" id="color-add" value={value.color} onChange={(e) => { handleChangeOption(value.id, { color: e.target.value }) }}>
 
                 <option value="0" key={0}>Chọn</option>
                 {
@@ -248,10 +247,10 @@ const AddNewProduct = props => {
               </CSelect>
             </CFormGroup>
           </CCol>
-          <CCol xs="3" style={{ display: isSize ? "flex" : 'none' }}>
+          <CCol style={{ display: isSize ? "flex" : 'none' }}>
             <CFormGroup>
               <CLabel htmlFor="size">Kích thước</CLabel>
-              <CSelect custom name="size" id="size" value={value.size} onChange={(e) => { handleChangeOption(value.id, { size: e.target.value }) }}>
+              <CSelect custom name="size" id="size-add" value={value.size} onChange={(e) => { handleChangeOption(value.id, { size: e.target.value }) }}>
 
                 <option value="0" key={0}>Chọn</option>
                 {
@@ -260,16 +259,16 @@ const AddNewProduct = props => {
               </CSelect>
             </CFormGroup>
           </CCol>
-          <CCol xs="3" >
+          <CCol >
             <CFormGroup>
               <CLabel htmlFor="price">Đơn giá</CLabel>
-              <CInput type="number" id="price" placeholder="Nhập giá" value={value.price} onChange={(e) => { handleChangeOption(value.id, { price: e.target.value }) }} />
+              <CInput type="number" id="-add" placeholder="Nhập giá" value={value.price} onChange={(e) => { handleChangeOption(value.id, { price: e.target.value }) }} />
             </CFormGroup>
           </CCol>
-          <CCol xs="3">
+          <CCol>
             <CFormGroup>
               <CLabel htmlFor="quantity">Số lượng</CLabel>
-              <CInput type="number" id="quantity" placeholder="Nhập SL" value={value.quantity} onChange={(e) => { handleChangeOption(value.id, { quantity: e.target.value }) }} />
+              <CInput type="number" id="quantity-add" placeholder="Nhập SL" value={value.quantity} onChange={(e) => { handleChangeOption(value.id, { quantity: e.target.value }) }} />
             </CFormGroup>
           </CCol>
           <CCol xs="12" style={{ display: isColor ? "flex" : "none" }}>
@@ -294,7 +293,7 @@ const AddNewProduct = props => {
                         width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
                         marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
                       }}>
-                        <img alt="select" style={{ width: 60, height: '100%' }} src={file.preview} onClick={() => { handlePreview(file) }} />
+                        <img className="img-thumbnail-table" alt="select" style={{ width: 60, height: '100%' }} src={file.preview} onClick={() => { handlePreview(file) }} />
                         <CButton className="button-delete-image" onClick={() => { handleDeleteImage(value.id, index) }}
                           style={{ width: 24, height: '100%', border: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                           <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
@@ -357,7 +356,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="name">Tên sản phẩm</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="name" name="name" placeholder="Nhập tên..." value={attributes.name} onChange={(e) => { handleChangeAtrribute({ name: e.target.value }) }} />
+                    <CInput id="name-add" name="name" placeholder="Nhập tên..." value={attributes.name} onChange={(e) => { handleChangeAtrribute({ name: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -367,7 +366,7 @@ const AddNewProduct = props => {
                   <CCol xs="12" md="9">
                     <CTextarea
                       name="description"
-                      id="description"
+                      id="description-add"
                       rows="5"
                       placeholder="Nhập mô tả sản phẩm..."
                       value={attributes.description}
@@ -382,7 +381,7 @@ const AddNewProduct = props => {
                   <CCol xs="12" md="9">
                     <CTextarea
                       name="short_description"
-                      id="short_description"
+                      id="short_description-add"
                       rows="3"
                       placeholder="Nhập mô tả ngắn gọn..."
                       value={attributes.short_description}
@@ -397,7 +396,7 @@ const AddNewProduct = props => {
                   <CCol xs="12" md="9">
                     <CTextarea
                       name="highlight"
-                      id="highlight"
+                      id="highlight-add"
                       rows="3"
                       placeholder="Nhập điểm nổi bật..."
                       value={attributes.highlight}
@@ -410,7 +409,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="discount">Giảm giá(%)</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput value={attributes.discount} onChange={(e) => { handleChangeAtrribute({ discount: e.target.value }) }} type="number" id="discount" name="discount" max={100} min={0} placeholder="Nhập giảm giá..." />
+                    <CInput value={attributes.discount} onChange={(e) => { handleChangeAtrribute({ discount: e.target.value }) }} type="number" id="discount-add" name="discount" max={100} min={0} placeholder="Nhập giảm giá..." />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -419,7 +418,7 @@ const AddNewProduct = props => {
                   </CCol>
                   <CCol sm="9" style={{ display: 'flex', alignItems: 'center' }}>
                     <CSwitch
-                      id="free_ship"
+                      id="free_ship-add"
                       name="free_ship"
                       className={'mx-1'}
                       variant={'3d'}
@@ -440,11 +439,11 @@ const AddNewProduct = props => {
                         <CDropdownToggle caret color="primary">
                           Chọn danh mục
                         </CDropdownToggle>
-                        <CDropdownMenu style={{padding: 20}}>
-                          <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect}/>
+                        <CDropdownMenu style={{ padding: 15 }}>
+                          <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect} />
                         </CDropdownMenu>
                       </CDropdown>
-                      <CInput disabled className="disable-detail" id="category" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
+                      <CInput disabled className="disable-detail" id="category-add" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
                     </CInputGroup>
                   </CCol>
                 </CFormGroup>
@@ -453,7 +452,8 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="brand">Thương hiệu</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CSelect custom name="brand" id="brand" value={attributes.brand} onChange={(e) => { handleChangeAtrribute({ brand: e.target.value }) }}>
+                    <CSelect
+                      custom name="brand" id="brand-add" value={attributes.brand} onChange={(e) => { handleChangeAtrribute({ brand: e.target.value }) }}>
 
                       <option value="0" key={0}>Chọn thương hiệu</option>
                       {
@@ -467,7 +467,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="material">Chất liệu</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="material" name="material" placeholder="Nhập chất liệu" value={attributes.material} onChange={(e) => { handleChangeAtrribute({ material: e.target.value }) }} />
+                    <CInput id="material-add" name="material" placeholder="Nhập chất liệu" value={attributes.material} onChange={(e) => { handleChangeAtrribute({ material: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -475,7 +475,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="style">Kiểu dáng</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="style" name="style" placeholder="Nhập kiểu dáng" value={attributes.style} onChange={(e) => { handleChangeAtrribute({ style: e.target.value }) }} />
+                    <CInput id="style-add" name="style" placeholder="Nhập kiểu dáng" value={attributes.style} onChange={(e) => { handleChangeAtrribute({ style: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -483,7 +483,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="purpose">Mục đích sử dụng</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="purpose" name="purpose" placeholder="Nhập mục đích sử dụng" value={attributes.purpose} onChange={(e) => { handleChangeAtrribute({ purpose: e.target.value }) }} />
+                    <CInput id="purpose-add" name="purpose" placeholder="Nhập mục đích sử dụng" value={attributes.purpose} onChange={(e) => { handleChangeAtrribute({ purpose: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -491,7 +491,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="season">Mùa phù hợp</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="season" name="season" placeholder="Nhập kiểu dáng" value={attributes.season} onChange={(e) => { handleChangeAtrribute({ season: e.target.value }) }} />
+                    <CInput id="season-add" name="season" placeholder="Nhập kiểu dáng" value={attributes.season} onChange={(e) => { handleChangeAtrribute({ season: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>
@@ -499,7 +499,7 @@ const AddNewProduct = props => {
                     <CLabel htmlFor="madein">Xuất xứ</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="madein" name="madein" placeholder="Nhập xuất xứ" value={attributes.madein} onChange={(e) => { handleChangeAtrribute({ madein: e.target.value }) }} />
+                    <CInput id="madein-add" name="madein" placeholder="Nhập xuất xứ" value={attributes.madein} onChange={(e) => { handleChangeAtrribute({ madein: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
               </CCardBody>
@@ -520,7 +520,7 @@ const AddNewProduct = props => {
                       <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
                         <CSwitch
                           size="sm"
-                          id="is_color"
+                          id="is_color-add"
                           name="is_color"
                           className="mr-1"
                           color="primary"
@@ -541,7 +541,7 @@ const AddNewProduct = props => {
                       <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
                         <CSwitch
                           size="sm"
-                          id="is_size"
+                          id="is_size-add"
                           name="is_size"
                           className="mr-1"
                           color="primary"
@@ -565,7 +565,7 @@ const AddNewProduct = props => {
                 <CFormGroup row style={{ display: !isColor ? "flex" : "none", marginTop: 10 }}>
                   <CCol xs="12" md="1">
                     <CInputFile
-                      id="file-multiple-input"
+                      id="file-multiple-input-add"
                       name="file-multiple-input"
                       multiple
                       custom
@@ -586,7 +586,7 @@ const AddNewProduct = props => {
                               width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
                               marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
                             }}>
-                              <img alt="select" style={{ width: 60, height: '100%' }} src={file.preview} onClick={() => { handlePreview(file) }} />
+                              <img className="img-thumbnail-table" alt="select" style={{ width: 60, height: '100%' }} src={file.preview} onClick={() => { handlePreview(file) }} />
                               <CButton className="button-delete-image" onClick={() => { handleDeleteImage(0, index) }}
                                 style={{ width: 24, height: '100%', border: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />

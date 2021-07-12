@@ -11,7 +11,6 @@ import {
   CTextarea,
   CInput,
   CInputFile,
-  CInputRadio,
   CLabel,
   CSelect,
   CRow,
@@ -21,6 +20,10 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
+  CInputGroup,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
@@ -30,9 +33,10 @@ import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutl
 import { getBase64 } from 'src/utils/ImageConst';
 
 import http from "../../../utils/http-common";
-import { FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
+// import { FormControl, FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
 import './editProduct.css';
 import { DeleteOutline } from '@material-ui/icons';
+import CategoriesComponent from 'src/components/Categories';
 
 const EditProduct = props => {
   const [brands, setBrands] = useState([]);
@@ -52,7 +56,11 @@ const EditProduct = props => {
     id: 0, name: '', description: '', short_description: '', highlight: '',
     discount: 0, isFreeship: false, parentCategory: 16, category: 0, brand: 0,
     material: '', style: '', season: '', madein: '', purpose: ''
-  })
+  });
+
+  const [expanded, setExpanded] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [pathCategory, setPathCategory] = useState({});
 
 
   useEffect(() => {
@@ -73,7 +81,12 @@ const EditProduct = props => {
           material, style, season: suitable_season, madein: madeIn === null ? "Khác" : madeIn, purpose
         }));
 
-        loadSubCategories(parseInt(categories.split('/')[1]))
+        // loadSubCategories(parseInt(categories.split('/')[1]))
+
+        const path = await findPathCategories(category.id);
+        setPathCategory(path);
+        setSelected(category.id.toString());
+        setExpanded(path.categoryIds);
 
         let is_color = attributes.some(a => a.id === 80);
         let is_size = attributes.some(s => s.id === 164);
@@ -292,228 +305,273 @@ const EditProduct = props => {
     });
   }
   const handleChangeMode = new_mode => {
-      setModeView(new_mode);
+    setModeView(new_mode);
+  }
+
+  const handleToggle = (event, nodeIds) => {
+    // setExpanded(nodeIds);
+  };
+
+  const handleSelect = async (event, nodeIds) => {
+    let index = expanded.indexOf(nodeIds);
+
+    if (index > -1) {
+      setExpanded(prev => prev.slice(index + 1, prev.length - index));
+    } else {
+      const path = await findPathCategories(nodeIds);
+      
+      if (path.subCategory)
+        setExpanded(path.categoryIds);
+      else {
+        setPathCategory(path);
+        setSelected(nodeIds);
+      };
     }
+  };
 
-    const optionComponent = () => {
-      var components = [];
-      listOptions.forEach((value, index) => {
-        // console.log(value)
-        components.push(
-          <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, marginBottom: '8px' }}>
-            <CCol xs="3" style={{ display: isColor ? "flex" : "none" }}>
-              <CFormGroup>
-                <CLabel htmlFor="color">Màu sắc</CLabel>
-                <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="color" id="color" value={value.color} onChange={(e) => { handleChangeOption(value.id, { color: e.target.value }) }}>
+  const findPathCategories = async (id) => {
+    const response = await http.get(`/category/${id}/get-path`);
+    const data = response.data;
+    return data;
+  }
 
-                  <option value="0" key={0}>Chọn</option>
-                  {
-                    colors.map(v => <option value={v.id} key={v.id}>{v.value}</option>)
-                  }
-                </CSelect>
-              </CFormGroup>
-            </CCol>
-            <CCol xs="3" style={{ display: isSize ? "flex" : 'none' }}>
-              <CFormGroup>
-                <CLabel htmlFor="size">Kích thước</CLabel>
-                <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="size" id="size" value={value.size} onChange={(e) => { handleChangeOption(value.id, { size: e.target.value }) }}>
+  const optionComponent = () => {
+    var components = [];
+    listOptions.forEach((value, index) => {
+      // console.log(value)
+      components.push(
+        <CFormGroup row key={value.id} style={{ backgroundColor: 'rgba(242, 242, 242, 0.6)', borderRadius: 5, marginBottom: '8px' }}>
+          <CCol  style={{ display: isColor ? "flex" : "none" }}>
+            <CFormGroup>
+              <CLabel htmlFor="color">Màu sắc</CLabel>
+              <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="color" id="color" value={value.color} onChange={(e) => { handleChangeOption(value.id, { color: e.target.value }) }}>
 
-                  <option value="0" key={0}>Chọn</option>
-                  {
-                    sizes.map(v => <option value={v.id} key={v.id}>{v.value}</option>)
-                  }
-                </CSelect>
-              </CFormGroup>
-            </CCol>
-            <CCol xs="3" >
-              <CFormGroup>
-                <CLabel htmlFor="price">Đơn giá</CLabel>
-                <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} type="number" id="price" placeholder="Nhập giá" value={value.price.value} onChange={(e) => { handleChangeOption(value.id, { price: e.target.value }) }} />
-              </CFormGroup>
-            </CCol>
-            <CCol xs="3">
-              <CFormGroup>
-                <CLabel htmlFor="quantity">Số lượng</CLabel>
-                <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} type="number" id="quantity" placeholder="Nhập SL" value={value.quantity.value} onChange={(e) => { handleChangeOption(value.id, { quantity: e.target.value }) }} />
-              </CFormGroup>
-            </CCol>
-            <CCol xs="12" style={{ display: isColor ? "flex" : "none" }}>
-              <CFormGroup>
-                <CInputFile
-                  id={`file-multiple-input${value.id}`}
-                  name={`file-multiple-input${value.id}`}
-                  multiple
-                  custom
-                  hidden
-                  onChange={(e) => { fileChanged(e, value.id) }}
-                />
-                <CLabel htmlFor="images">Ảnh</CLabel>
-                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                  <CButton
-                    variant="outline" color="dark"
-                    style={{ width: 80, height: 80, marginBottom: 5, display: modeView === "edit" ? "inline" : "none" }}
-                    onClick={() => { document.getElementById(`file-multiple-input${value.id}`).click() }}
-                  >
-                    <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
-                  </CButton>
-                  {
-                    value.images.map((file, index) => {
-                      return (
-                        <div key={index} style={{
-                          width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
-                          marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
-                        }}>
-                          <img alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} />
-                          <CButton
-                            disabled={modeView === "edit" ? false : true}
-                            className="button-delete-image" onClick={() => { handleDeleteImage(value.id, index) }}
-                            style={{
-                              width: 24, height: '100%', border: 0, display: 'flex',
-                              justifyContent: 'center', alignItems: 'center',
-                            }}>
-                            <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
-                          </CButton>
-                        </div>
-                      );
-                    })
-                  }
-                  {/* <Modal title={preview.title} onClose={handleCancel} show={preview.visible}>
+                <option value="0" key={0}>Chọn</option>
+                {
+                  colors.map(v => <option value={v.id} key={v.id}>{v.value}</option>)
+                }
+              </CSelect>
+            </CFormGroup>
+          </CCol>
+          <CCol  style={{ display: isSize ? "flex" : 'none' }}>
+            <CFormGroup>
+              <CLabel htmlFor="size">Kích thước</CLabel>
+              <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="size" id="size" value={value.size} onChange={(e) => { handleChangeOption(value.id, { size: e.target.value }) }}>
+
+                <option value="0" key={0}>Chọn</option>
+                {
+                  sizes.map(v => <option value={v.id} key={v.id}>{v.value}</option>)
+                }
+              </CSelect>
+            </CFormGroup>
+          </CCol>
+          <CCol>
+            <CFormGroup>
+              <CLabel htmlFor="price">Đơn giá</CLabel>
+              <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} type="number" id="price" placeholder="Nhập giá" value={value.price.value} onChange={(e) => { handleChangeOption(value.id, { price: e.target.value }) }} />
+            </CFormGroup>
+          </CCol>
+          <CCol>
+            <CFormGroup>
+              <CLabel htmlFor="quantity">Số lượng</CLabel>
+              <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} type="number" id="quantity" placeholder="Nhập SL" value={value.quantity.value} onChange={(e) => { handleChangeOption(value.id, { quantity: e.target.value }) }} />
+            </CFormGroup>
+          </CCol>
+          <CCol xs="12" style={{ display: isColor ? "flex" : "none" }}>
+            <CFormGroup>
+              <CInputFile
+                id={`file-multiple-input${value.id}`}
+                name={`file-multiple-input${value.id}`}
+                multiple
+                custom
+                hidden
+                onChange={(e) => { fileChanged(e, value.id) }}
+              />
+              <CLabel htmlFor="images">Ảnh</CLabel>
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
+                <CButton
+                  variant="outline" color="dark"
+                  style={{ width: 80, height: 80, marginBottom: 5, display: modeView === "edit" ? "inline" : "none" }}
+                  onClick={() => { document.getElementById(`file-multiple-input${value.id}`).click() }}
+                >
+                  <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
+                </CButton>
+                {
+                  value.images.map((file, index) => {
+                    return (
+                      <div key={index} style={{
+                        width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
+                        marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
+                      }}>
+                        <img alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} className="img-thumbnail-table"/>
+                        <CButton
+                          disabled={modeView === "edit" ? false : true}
+                          className="button-delete-image" onClick={() => { handleDeleteImage(value.id, index) }}
+                          style={{
+                            width: 24, height: '100%', border: 0, display: 'flex',
+                            justifyContent: 'center', alignItems: 'center',
+                          }}>
+                          <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
+                        </CButton>
+                      </div>
+                    );
+                  })
+                }
+                {/* <Modal title={preview.title} onClose={handleCancel} show={preview.visible}>
                   <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
                 </Modal> */}
-                  <CModal
-                    scrollable
-                    show={preview.visible}
-                    onClose={handleCancel}
-                  // color="info"
-                  >
-                    <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <CModalTitle>{preview.title}</CModalTitle>
-                      <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
-                    </CModalHeader>
-                    <CModalBody>
-                      <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
-                    </CModalBody>
-                    <CModalFooter>
-                      <CButton color="secondary" onClick={handleCancel}>Đóng</CButton>
-                    </CModalFooter>
-                  </CModal>
-                </div>
-              </CFormGroup>
-            </CCol>
-            <CButton
-              color="secondary"
-              style={{ borderRadius: 13, width: 20, height: 20, justifyContent: 'center', alignItems: 'center', padding: 0, position: 'absolute', right: -1, display: (listOptions.length > 1) && (modeView === "edit") ? "flex" : "none" }}
-              onClick={() => { handleDeleteOption(value.id) }}
-            >
-              <CIcon name='cil-x' style={{ width: 12, height: 12 }} />
-            </CButton>
-          </CFormGroup>
-        )
-      });
-      return components;
-    }
+                <CModal
+                  scrollable
+                  show={preview.visible}
+                  onClose={handleCancel}
+                // color="info"
+                >
+                  <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <CModalTitle>{preview.title}</CModalTitle>
+                    <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
+                  </CModalHeader>
+                  <CModalBody>
+                    <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
+                  </CModalBody>
+                  <CModalFooter>
+                    <CButton color="secondary" onClick={handleCancel}>Đóng</CButton>
+                  </CModalFooter>
+                </CModal>
+              </div>
+            </CFormGroup>
+          </CCol>
+          <CButton
+            color="secondary"
+            style={{ borderRadius: 13, width: 20, height: 20, justifyContent: 'center', alignItems: 'center', padding: 0, position: 'absolute', right: -1, display: (listOptions.length > 1) && (modeView === "edit") ? "flex" : "none" }}
+            onClick={() => { handleDeleteOption(value.id) }}
+          >
+            <CIcon name='cil-x' style={{ width: 12, height: 12 }} />
+          </CButton>
+        </CFormGroup>
+      )
+    });
+    return components;
+  }
 
-    return (
-      <>
-        <CForm className="form-horizontal" onSubmit={(e) => { onSubmit(e) }}>
-          <CRow>
-            <CCol xs="12" sm="6" md="7">
-              <CCard>
-                <CCardBody>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="id">Id</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput disabled id="id" name="id" placeholder="" value={attributes.id} onChange={(e) => { handleChangeAtrribute({ id: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="name">Tên sản phẩm</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="name" name="name" placeholder="Nhập tên..." value={attributes.name} onChange={(e) => { handleChangeAtrribute({ name: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="description">Mô tả</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CTextarea
-                        className="disable-detail"
-                        disabled={modeView === "edit" ? false : true}
-                        name="description"
-                        id="description"
-                        rows="5"
-                        placeholder="Nhập mô tả sản phẩm..."
-                        value={attributes.description}
-                        onChange={(e) => { handleChangeAtrribute({ description: e.target.value }) }}
-                      />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="short_description">Mô tả ngắn gọn</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CTextarea
-                        className="disable-detail"
-                        disabled={modeView === "edit" ? false : true}
-                        name="short_description"
-                        id="short_description"
-                        rows="3"
-                        placeholder="Nhập mô tả ngắn gọn..."
-                        value={attributes.short_description}
-                        onChange={(e) => { handleChangeAtrribute({ short_description: e.target.value }) }}
-                      />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="highlight">Điểm nổi bật</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CTextarea
-                        className="disable-detail"
-                        disabled={modeView === "edit" ? false : true}
-                        name="highlight"
-                        id="highlight"
-                        rows="3"
-                        placeholder="Nhập điểm nổi bật..."
-                        value={attributes.highlight}
-                        onChange={(e) => { handleChangeAtrribute({ highlight: e.target.value }) }}
-                      />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel className="disable-detail" htmlFor="discount">Giảm giá(%)</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} value={attributes.discount} onChange={(e) => { handleChangeAtrribute({ discount: e.target.value }) }} type="number" id="discount" name="discount" max={100} min={0} placeholder="Nhập giảm giá..." />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol tag="label" sm="3" className="col-form-label">
-                      <CLabel style={{ marginBottom: 0 }} htmlFor="free_ship">Miễn phí vận chuyển</CLabel>
-                    </CCol>
-                    <CCol sm="9" style={{ display: 'flex', alignItems: 'center' }}>
-                      <CSwitch
-                        className="disable-detail mx-1"
-                        disabled={modeView === "edit" ? false : true}
-                        id="free_ship"
-                        name="free_ship"
-                        variant={'3d'}
-                        color={'primary'}
-                        // defaultChecked
-                        size={'sm'}
-                        checked={attributes.isFreeship}
-                        onChange={(e) => { handleChangeAtrribute({ isFreeship: !attributes.isFreeship }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
+  return (
+    <>
+      <CForm className="form-horizontal" onSubmit={(e) => { onSubmit(e) }}>
+        <CRow>
+          <CCol xs="12" sm="6" md="7">
+            <CCard>
+              <CCardBody>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="id">Id</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput disabled id="id" name="id" placeholder="" value={attributes.id} onChange={(e) => { handleChangeAtrribute({ id: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="name">Tên sản phẩm</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="name" name="name" placeholder="Nhập tên..." value={attributes.name} onChange={(e) => { handleChangeAtrribute({ name: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="description">Mô tả</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CTextarea
+                      className="disable-detail"
+                      disabled={modeView === "edit" ? false : true}
+                      name="description"
+                      id="description"
+                      rows="5"
+                      placeholder="Nhập mô tả sản phẩm..."
+                      value={attributes.description}
+                      onChange={(e) => { handleChangeAtrribute({ description: e.target.value }) }}
+                    />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="short_description">Mô tả ngắn gọn</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CTextarea
+                      className="disable-detail"
+                      disabled={modeView === "edit" ? false : true}
+                      name="short_description"
+                      id="short_description"
+                      rows="3"
+                      placeholder="Nhập mô tả ngắn gọn..."
+                      value={attributes.short_description}
+                      onChange={(e) => { handleChangeAtrribute({ short_description: e.target.value }) }}
+                    />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="highlight">Điểm nổi bật</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CTextarea
+                      className="disable-detail"
+                      disabled={modeView === "edit" ? false : true}
+                      name="highlight"
+                      id="highlight"
+                      rows="3"
+                      placeholder="Nhập điểm nổi bật..."
+                      value={attributes.highlight}
+                      onChange={(e) => { handleChangeAtrribute({ highlight: e.target.value }) }}
+                    />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel className="disable-detail" htmlFor="discount">Giảm giá(%)</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} value={attributes.discount} onChange={(e) => { handleChangeAtrribute({ discount: e.target.value }) }} type="number" id="discount" name="discount" max={100} min={0} placeholder="Nhập giảm giá..." />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol tag="label" sm="3" className="col-form-label">
+                    <CLabel style={{ marginBottom: 0 }} htmlFor="free_ship">Miễn phí vận chuyển</CLabel>
+                  </CCol>
+                  <CCol sm="9" style={{ display: 'flex', alignItems: 'center' }}>
+                    <CSwitch
+                      className="disable-detail mx-1"
+                      disabled={modeView === "edit" ? false : true}
+                      id="free_ship"
+                      name="free_ship"
+                      variant={'3d'}
+                      color={'primary'}
+                      // defaultChecked
+                      size={'sm'}
+                      checked={attributes.isFreeship}
+                      onChange={(e) => { handleChangeAtrribute({ isFreeship: !attributes.isFreeship }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel>Danh mục</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInputGroup>
+                      <CDropdown style={{display: modeView === "edit" ? 'flex' : 'none'}} className="input-group-prepend">
+                        <CDropdownToggle caret color="primary">
+                          Chọn danh mục
+                        </CDropdownToggle>
+                        <CDropdownMenu style={{ padding: 15 }}>
+                          <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect} />
+                        </CDropdownMenu>
+                      </CDropdown>
+                      <CInput disabled className="disable-detail" id="category" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
+                    </CInputGroup>
+                  </CCol>
+                </CFormGroup>
+                {/* <CFormGroup row>
                     <CCol md="3" style={{ display: 'flex', alignItems: 'center' }}>
                       <CLabel>Danh mục</CLabel>
                     </CCol>
@@ -541,196 +599,196 @@ const EditProduct = props => {
                         }
                       </CSelect>
                     </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="brand">Thương hiệu</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="brand" id="brand" value={attributes.brand} onChange={(e) => { handleChangeAtrribute({ brand: e.target.value }) }}>
+                  </CFormGroup> */}
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="brand">Thương hiệu</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="brand" id="brand" value={attributes.brand} onChange={(e) => { handleChangeAtrribute({ brand: e.target.value }) }}>
 
-                        <option value="0" key={0}>Chọn thương hiệu</option>
-                        {
-                          brands.map(v => <option value={v.id} key={v.id}>{v.name}</option>)
-                        }
-                      </CSelect>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="material">Chất liệu</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="material" name="material" placeholder="Nhập chất liệu" value={attributes.material} onChange={(e) => { handleChangeAtrribute({ material: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="style">Kiểu dáng</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="style" name="style" placeholder="Nhập kiểu dáng" value={attributes.style} onChange={(e) => { handleChangeAtrribute({ style: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="purpose">Mục đích sử dụng</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="purpose" name="purpose" placeholder="Nhập mục đích sử dụng" value={attributes.purpose} onChange={(e) => { handleChangeAtrribute({ purpose: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="season">Mùa phù hợp</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="season" name="season" placeholder="Nhập kiểu dáng" value={attributes.season} onChange={(e) => { handleChangeAtrribute({ season: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="madein">Xuất xứ</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="madein" name="madein" placeholder="Nhập xuất xứ" value={attributes.madein} onChange={(e) => { handleChangeAtrribute({ madein: e.target.value }) }} />
-                    </CCol>
-                  </CFormGroup>
-                </CCardBody>
-              </CCard>
-            </CCol>
-            <CCol xs="12" sm="6" md="5">
-              <CCard>
-                <CCardHeader>
-                  Options
-                </CCardHeader>
-                <CCardBody>
-                  <CFormGroup row className="my-0" style={{ display: modeView === "edit" ? "flex" : "none" }}>
-                    <CCol xs="6">
-                      <CFormGroup row>
-                        <CCol tag="label" sm="6" className="col-form-label">
-                          <CLabel style={{ marginBottom: 0 }} htmlFor="is_color">Có màu sắc</CLabel>
-                        </CCol>
-                        <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
-                          <CSwitch
-                            size="sm"
-                            id="is_color"
-                            name="is_color"
-                            className="mr-1"
-                            color="primary"
-                            shape="pill"
-                            checked={isColor}
-                            onChange={() => {
-                              handleSetIsColor(!isColor)
-                            }}
-                          />
-                        </CCol>
-                      </CFormGroup>
-                    </CCol>
-                    <CCol xs="6">
-                      <CFormGroup row>
-                        <CCol tag="label" sm="6" className="col-form-label">
-                          <CLabel style={{ marginBottom: 0 }} htmlFor="is_size">Có kích thước</CLabel>
-                        </CCol>
-                        <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
-                          <CSwitch
-                            size="sm"
-                            id="is_size"
-                            name="is_size"
-                            className="mr-1"
-                            color="primary"
-                            shape="pill"
-                            checked={isSize}
-                            onChange={() => {
-                              handleSetIsSize(!isSize)
-                            }}
-                          />
-                        </CCol>
-                      </CFormGroup>
-                    </CCol>
-                  </CFormGroup>
-                  {
-                    optionComponent()
-                  }
-                  <CButton style={{ display: (!isColor && !isSize) || modeView === "detail" ? "none" : "flex" }} color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
-                    <CIcon name="cil-plus" size="sm" />
-                    Thêm Option
-                  </CButton>
-                  <CFormGroup row style={{ display: !isColor ? "flex" : "none", marginTop: 10 }}>
-                    <CCol xs="12" md="1">
-                      <CInputFile
-                        id="file-multiple-input"
-                        name="file-multiple-input"
-                        multiple
-                        custom
-                        hidden
-                        onChange={(e) => { fileChanged(e, 0) }}
-                      />
-                      <CLabel htmlFor="images">Ảnh</CLabel>
-                    </CCol>
-                    <CCol md="11">
-                      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                        <CButton
-                          variant="outline" color="dark"
-                          style={{ width: 80, height: 80, display: modeView === "edit" ? "inline" : "none" }}
-                          onClick={() => { document.getElementById("file-multiple-input").click() }}>
-                          <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
-                        </CButton>
-                        {
-                          fileList.map((file, index) => {
-                            return (
-                              <div key={index} style={{
-                                width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
-                                marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
-                              }}>
-                                <img alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} />
-                                <CButton className="button-delete-image" onClick={() => { handleDeleteImage(0, index) }}
-                                  style={{ width: 24, height: '100%', border: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                  <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
-                                </CButton>
-                              </div>
-                            );
-                          })
-                        }
-                      </div>
-                    </CCol>
-                    <CModal
-                      scrollable
-                      show={preview.visible}
-                      onClose={handleCancel}
-                    // color="info"
-                    >
-                      <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <CModalTitle>{preview.title}</CModalTitle>
-                        <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
-                      </CModalHeader>
-                      <CModalBody>
-                        <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
-                      </CModalBody>
-                      <CModalFooter>
-                        <CButton color="secondary" onClick={handleCancel}>Đóng</CButton>
-                      </CModalFooter>
-                    </CModal>
-                  </CFormGroup>
-                </CCardBody>
-                <CCardFooter>
-                  <CButton style={{ display: modeView === "detail" ? "inline" : "none", marginRight: 10 }} type="button" size="sm" color="info" onClick={() => { handleChangeMode("edit") }}><CIcon name="cil-pen" style={{ paddingRight: 2 }} />Sửa sản phẩm</CButton>
-                  <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="primary" onClick={(e) => { handleSaveChange(e) }}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Lưu lại</CButton>
-                  <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="danger" onClick={(e) => { handleDeleteProduct(e) }}>
-                    <DeleteOutline style={{ paddingRight: 2, fontSize: 22 }} />
-                    Xoá sản phẩm</CButton>
-                </CCardFooter>
-              </CCard>
-            </CCol>
-          </CRow>
-        </CForm >
-      </>
-    )
-  }
+                      <option value="0" key={0}>Chọn thương hiệu</option>
+                      {
+                        brands.map(v => <option value={v.id} key={v.id}>{v.name}</option>)
+                      }
+                    </CSelect>
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="material">Chất liệu</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="material" name="material" placeholder="Nhập chất liệu" value={attributes.material} onChange={(e) => { handleChangeAtrribute({ material: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="style">Kiểu dáng</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="style" name="style" placeholder="Nhập kiểu dáng" value={attributes.style} onChange={(e) => { handleChangeAtrribute({ style: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="purpose">Mục đích sử dụng</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="purpose" name="purpose" placeholder="Nhập mục đích sử dụng" value={attributes.purpose} onChange={(e) => { handleChangeAtrribute({ purpose: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="season">Mùa phù hợp</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="season" name="season" placeholder="Nhập kiểu dáng" value={attributes.season} onChange={(e) => { handleChangeAtrribute({ season: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="madein">Xuất xứ</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput className="disable-detail" disabled={modeView === "edit" ? false : true} id="madein" name="madein" placeholder="Nhập xuất xứ" value={attributes.madein} onChange={(e) => { handleChangeAtrribute({ madein: e.target.value }) }} />
+                  </CCol>
+                </CFormGroup>
+              </CCardBody>
+            </CCard>
+          </CCol>
+          <CCol xs="12" sm="6" md="5">
+            <CCard>
+              <CCardHeader>
+                Options
+              </CCardHeader>
+              <CCardBody>
+                <CFormGroup row className="my-0" style={{ display: modeView === "edit" ? "flex" : "none" }}>
+                  <CCol xs="6">
+                    <CFormGroup row>
+                      <CCol tag="label" sm="6" className="col-form-label">
+                        <CLabel style={{ marginBottom: 0 }} htmlFor="is_color">Có màu sắc</CLabel>
+                      </CCol>
+                      <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
+                        <CSwitch
+                          size="sm"
+                          id="is_color"
+                          name="is_color"
+                          className="mr-1"
+                          color="primary"
+                          shape="pill"
+                          checked={isColor}
+                          onChange={() => {
+                            handleSetIsColor(!isColor)
+                          }}
+                        />
+                      </CCol>
+                    </CFormGroup>
+                  </CCol>
+                  <CCol xs="6">
+                    <CFormGroup row>
+                      <CCol tag="label" sm="6" className="col-form-label">
+                        <CLabel style={{ marginBottom: 0 }} htmlFor="is_size">Có kích thước</CLabel>
+                      </CCol>
+                      <CCol sm="6" style={{ display: 'flex', alignItems: 'center' }}>
+                        <CSwitch
+                          size="sm"
+                          id="is_size"
+                          name="is_size"
+                          className="mr-1"
+                          color="primary"
+                          shape="pill"
+                          checked={isSize}
+                          onChange={() => {
+                            handleSetIsSize(!isSize)
+                          }}
+                        />
+                      </CCol>
+                    </CFormGroup>
+                  </CCol>
+                </CFormGroup>
+                {
+                  optionComponent()
+                }
+                <CButton style={{ display: (!isColor && !isSize) || modeView === "detail" ? "none" : "flex" }} color="success" variant="outline" size="sm" onClick={() => { handleAddOption() }}>
+                  <CIcon name="cil-plus" size="sm" />
+                  Thêm Option
+                </CButton>
+                <CFormGroup row style={{ display: !isColor ? "flex" : "none", marginTop: 10 }}>
+                  <CCol xs="12" md="1">
+                    <CInputFile
+                      id="file-multiple-input"
+                      name="file-multiple-input"
+                      multiple
+                      custom
+                      hidden
+                      onChange={(e) => { fileChanged(e, 0) }}
+                    />
+                    <CLabel htmlFor="images">Ảnh</CLabel>
+                  </CCol>
+                  <CCol md="11">
+                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
+                      <CButton
+                        variant="outline" color="dark"
+                        style={{ width: 80, height: 80, display: modeView === "edit" ? "inline" : "none" }}
+                        onClick={() => { document.getElementById("file-multiple-input").click() }}>
+                        <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
+                      </CButton>
+                      {
+                        fileList.map((file, index) => {
+                          return (
+                            <div key={index} style={{
+                              width: 100, height: 80, display: 'flex', justifyContent: 'space-between',
+                              marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
+                            }}>
+                              <img className="img-thumbnail-table" alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} />
+                              <CButton className="button-delete-image" onClick={() => { handleDeleteImage(0, index) }}
+                                style={{ width: 24, height: '100%', border: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
+                              </CButton>
+                            </div>
+                          );
+                        })
+                      }
+                    </div>
+                  </CCol>
+                  <CModal
+                    scrollable
+                    show={preview.visible}
+                    onClose={handleCancel}
+                  // color="info"
+                  >
+                    <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <CModalTitle>{preview.title}</CModalTitle>
+                      <CButton onClick={handleCancel}><CIcon name='cil-x' size="sm" /></CButton>
+                    </CModalHeader>
+                    <CModalBody>
+                      <img alt="image_product" style={{ width: '100%' }} src={preview.image} />
+                    </CModalBody>
+                    <CModalFooter>
+                      <CButton color="secondary" onClick={handleCancel}>Đóng</CButton>
+                    </CModalFooter>
+                  </CModal>
+                </CFormGroup>
+              </CCardBody>
+              <CCardFooter>
+                <CButton style={{ display: modeView === "detail" ? "inline" : "none", marginRight: 10 }} type="button" size="sm" color="info" onClick={() => { handleChangeMode("edit") }}><CIcon name="cil-pen" style={{ paddingRight: 2 }} />Sửa sản phẩm</CButton>
+                <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="primary" onClick={(e) => { handleSaveChange(e) }}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Lưu lại</CButton>
+                <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="danger" onClick={(e) => { handleDeleteProduct(e) }}>
+                  <DeleteOutline style={{ paddingRight: 2, fontSize: 22 }} />
+                  Xoá sản phẩm</CButton>
+              </CCardFooter>
+            </CCard>
+          </CCol>
+        </CRow>
+      </CForm >
+    </>
+  )
+}
 
-  EditProduct.defaultProps = {
-    mode: 'detail',
-    productId: 0
-  }
+EditProduct.defaultProps = {
+  mode: 'detail',
+  productId: 0
+}
 
-  export default EditProduct
+export default EditProduct
