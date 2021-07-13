@@ -31,16 +31,14 @@ import swal from 'sweetalert';
 
 
 
-const EditCategory = (props) => {
+const EditBrand = (props) => {
 
 
-  const [attrCategory, setAttrCategory] = useState({
-    id: 0, name: '', path: ''
+  const [attrBrand, setAttrBrand] = useState({
+    id: 0, name: ''
   });
 
   const [expanded, setExpanded] = useState([]);
-  const [selected, setSelected] = useState([]);
-  const [pathCategory, setPathCategory] = useState({});
 
   const [fileList, setFileList] = useState([]);
   const [preview, setPreview] = useState({ visible: false, image: '', title: '' });
@@ -49,62 +47,27 @@ const EditCategory = (props) => {
 
 
   useEffect(() => {
-    const loadCategoryDetail = async () => {
-      if (typeof (props.categoryId) === "number" && props.categoryId !== 0) {
-        const response = await http.get(`/category/${props.categoryId}/get-detail`);
+    const loadBrandDetail = async () => {
+      if (typeof (props.brandId) === "number" && props.brandId !== -1 && props.brandId !== 0) {
+        const response = await http.get(`/brand/${props.brandId}`);
         const data = await response.data;
         if (data === null || data === '' || typeof (data) === "undefined")
           return;
-        setAttrCategory(prev => ({ ...prev, id: data.id, name: data.name, path: data.path_url }));
-
-        const category_parent = data.is_subcategory ? data.category_ids[1] : data.category_ids[0];
-
-        const path = typeof (category_parent) === "undefined" ? { name: '' } : await findPathCategories(category_parent);
-        setPathCategory(path);
-        setSelected(typeof (category_parent) === "undefined" ? '' : category_parent.toString());
-        setExpanded(data.category_ids);
+        setAttrBrand(prev => ({ ...prev, id: data.id, name: data.name }));
 
         setFileList([{ id: data.id, value: data.icon }])
       }
     }
 
-    loadCategoryDetail();
+    loadBrandDetail();
 
     setModeView(props.mode)
 
   }, [props.categoryId, props.mode])
 
 
-  const handleChangeAttrCategory = (attribute) => {
-    setAttrCategory(prev => ({ ...prev, ...attribute }));
-  }
-
-  const handleToggle = (event, nodeIds) => {
-    // setExpanded(nodeIds);
-  };
-
-  const handleSelect = async (event, nodeIds) => {
-    let index = expanded.indexOf(nodeIds);
-
-    if (index > -1) {
-      setExpanded(prev => prev.slice(index + 1, prev.length - index));
-    } else {
-      const path = await findPathCategories(nodeIds);
-
-      if (path.is_subcategory) {
-        setExpanded(path.category_ids);
-      }
-
-      setSelected(nodeIds);
-      setPathCategory(path);
-    }
-  };
-
-  const findPathCategories = async (id) => {
-    console.log(id)
-    const response = await http.get(`/category/${id}/get-detail`);
-    const data = response.data;
-    return data;
+  const handleChangeAttrBrand = (attribute) => {
+    setAttrBrand(prev => ({ ...prev, ...attribute }));
   }
 
   const fileChanged = async (event) => {
@@ -211,46 +174,20 @@ const EditCategory = (props) => {
           <CCol>
             <CCard>
               <CCardBody>
-                <CFormGroup row>
-                  <CCol md="12">
+                <CFormGroup row style={{ marginBottom: 30 }}>
+                  <CCol md="12" >
                     <CLabel htmlFor="id">ID</CLabel>
                   </CCol>
                   <CCol xs="12">
-                    <CInput disabled id="id" name="id" placeholder="" value={attrCategory.id} />
+                    <CInput disabled id="id" name="id" placeholder="" value={attrBrand.id} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row style={{ marginBottom: 30 }}>
                   <CCol xs="12">
-                    <CLabel htmlFor="material">Tên danh mục</CLabel>
+                    <CLabel htmlFor="brand">Tên thương hiệu</CLabel>
                   </CCol>
                   <CCol xs="12">
-                    <CInput disabled={modeView === "edit" ? false : true} className="disable-detail" style={{ padding: 10, height: 'auto' }} size="normal" id="name-category-edit" name="name-category-edit" placeholder="Nhập tên danh mục..." value={attrCategory.name} onChange={(e) => { handleChangeAttrCategory({ name: e.target.value }) }} />
-                  </CCol>
-                </CFormGroup>
-                <CFormGroup row style={{ marginBottom: 30 }}>
-                  <CCol xs="12">
-                    <CLabel htmlFor="style">Path</CLabel>
-                  </CCol>
-                  <CCol xs="12">
-                    <CInput disabled={modeView === "edit" ? false : true} className="disable-detail" style={{ padding: 10, height: 'auto' }} size="normal" id="path-category-edit" name="path-category-edit" placeholder="Nhập path..." value={attrCategory.path} onChange={(e) => { handleChangeAttrCategory({ path: e.target.value }) }} />
-                  </CCol>
-                </CFormGroup>
-                <CFormGroup row style={{ marginBottom: 30 }}>
-                  <CCol xs="12">
-                    <CLabel>Danh mục cha</CLabel>
-                  </CCol>
-                  <CCol xs="12">
-                    <CInputGroup>
-                      <CDropdown style={{ display: modeView === "edit" ? 'flex' : 'none' }} className="input-group-prepend">
-                        <CDropdownToggle caret style={{ padding: 10, height: 'auto', backgroundColor: 'rgba(44, 56, 74, 0.1)' }}>
-                          Chọn danh mục
-                        </CDropdownToggle>
-                        <CDropdownMenu style={{ padding: 15 }}>
-                          <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect} />
-                        </CDropdownMenu>
-                      </CDropdown>
-                      <CInput style={{ padding: 10, height: 'auto' }} disabled className="disable-detail" id="category-edit" name="category-edit" placeholder="..." value={pathCategory.name} />
-                    </CInputGroup>
+                    <CInput disabled={modeView === "edit" ? false : true} className="disable-detail" style={{ padding: 10, height: 'auto' }} size="normal" id="name-category-edit" name="name-category-edit" placeholder="Nhập tên danh mục..." value={attrBrand.name} onChange={(e) => { handleChangeAttrBrand({ name: e.target.value }) }} />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup style={{ marginBottom: 30 }}>
@@ -303,11 +240,11 @@ const EditCategory = (props) => {
                   </div>
                 </CFormGroup>
                 <CFormGroup>
-                  <CButton style={{ display: modeView === "detail" ? "inline" : "none", marginRight: 10 }} type="button" size="sm" color="info" onClick={() => { handleChangeMode("edit") }}><CIcon name="cil-pen" style={{ paddingRight: 2 }} />Sửa danh mục</CButton>
+                  <CButton style={{ display: modeView === "detail" ? "inline" : "none", marginRight: 10 }} type="button" size="sm" color="info" onClick={() => { handleChangeMode("edit") }}><CIcon name="cil-pen" style={{ paddingRight: 2 }} />Sửa sản phẩm</CButton>
                   <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="primary" onClick={(e) => { handleSaveChange(e) }}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Lưu lại</CButton>
                   <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="danger" onClick={(e) => { handleDeleteProduct(e) }}>
                     <DeleteOutline style={{ paddingRight: 2, fontSize: 22 }} />
-                    Xoá danh mục</CButton>
+                    Xoá sản phẩm</CButton>
                 </CFormGroup>
               </CCardBody>
             </CCard>
@@ -318,9 +255,9 @@ const EditCategory = (props) => {
   )
 }
 
-EditCategory.defaultProps = {
+EditBrand.defaultProps = {
   mode: 'detail',
-  categoryId: 0
+  brandId: 0
 }
 
-export default EditCategory
+export default EditBrand

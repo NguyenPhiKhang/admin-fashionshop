@@ -19,31 +19,32 @@ const CardBrandComponent = (props) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleChooseAction = (mode) => {
     setAnchorEl(null);
+    props.handleClickAction(mode);
   };
 
 
   return (
-    <div className='card-brand-custom' style={{ height: 220, marginBottom: 20 }}>
+    <div className='card-brand-custom' style={{ height: 230, marginBottom: 20 }}>
       <div style={{ height: 105, borderBottom: '1px solid rgba(222,226,230,.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
-        <img style={{ height: 100, maxWidth: '100%' }} src={props.img_url} class="img-fluid" alt="Logo" />
+        <img style={{ height: 100, maxWidth: '100%' }} src={props.img_url} className="img-fluid" alt="Logo" />
       </div>
-      <div style={{textAlign: 'center', paddingTop: 10 }}>
+      <div style={{ textAlign: 'center', paddingTop: 10 }}>
         <h4 style={{ fontWeight: 'bold' }}>{props.name}</h4>
         <h6>{props.amount}</h6>
         <IconButton className="remove-ouline-focus" onClick={handleClick}>
-          <MoreVertOutlined style={{fontSize: 18}}/>
+          <MoreVertOutlined style={{ fontSize: 18 }} />
         </IconButton>
         <Menu
           id="simple-menu"
           anchorEl={anchorEl}
           keepMounted
           open={Boolean(anchorEl)}
-          onClose={handleClose}
+          onClose={handleChooseAction}
         >
-          <MenuItem onClick={handleClose}>Xem chi tiết</MenuItem>
-          <MenuItem onClick={handleClose}>Sửa</MenuItem>
+          <MenuItem onClick={() => { handleChooseAction("detail") }}>Xem chi tiết</MenuItem>
+          <MenuItem onClick={() => { handleChooseAction("edit") }}>Sửa</MenuItem>
         </Menu>
       </div>
     </div>

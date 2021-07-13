@@ -93,10 +93,6 @@ const CategoriesPage = () => {
     loadTotalPage();
   }, [])
 
-  const toggleEdit = (id, mode) => {
-    setModalAction(prev => ({ id: id, mode: mode, visible: !prev.visible }));
-  }
-
   const handleChangePage = number => {
     setPage(number);
   };
@@ -366,13 +362,13 @@ const CategoriesPage = () => {
               >
                 <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <CModalTitle>{modalAction.mode === "edit" ? "Sửa danh mục" : "Chi tiết danh mục"}</CModalTitle>
-                  <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
+                  <CButton onClick={toggleAction}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
                   <EditCategory categoryId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle}/>
                 </CModalBody>
                 <CModalFooter>
-                  <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>
+                  <CButton color="secondary" onClick={toggleAction}>Đóng</CButton>
                 </CModalFooter>
               </CModal>
             </CCardBody>

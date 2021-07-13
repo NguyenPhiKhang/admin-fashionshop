@@ -34,6 +34,7 @@ import AddNewProduct from '../AddNewProduct';
 import EditProduct from '../EditProduct';
 import http from 'src/utils/http-common';
 import CardBrandComponent from 'src/components/Brand/CardBrand';
+import EditBrand from '../EditBrand';
 
 const fields = [
   { key: 'id', label: 'Id', _style: { width: '5%' } },
@@ -55,6 +56,8 @@ const BrandsPage = () => {
   const [brands, setBrands] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
 
+  const [modalAction, setModalAction] = useState({ visible: false, mode: 'detail', id: 0 });
+
   useEffect(() => {
     const loadBrands = async () => {
       const response = await http.get(`/brand/get-filter?search=${search}`);
@@ -72,6 +75,16 @@ const BrandsPage = () => {
 
   const handleSearch = (e) => {
     setSearch(e.target.value)
+  }
+
+  const toggleAction = (id, mode)=>{
+    setModalAction(prev=>({id: id, mode: mode, visible: !prev.visible}))
+  }
+
+  const handleChangeTitle = title=>{
+    console.log("change tile")
+    if(title==="edit")
+      setModalAction(prev=>({...prev, mode: title}))
   }
 
   return (
@@ -97,11 +110,28 @@ const BrandsPage = () => {
                 {
                   brands.map((v, i) => (
                     <CCol xs="12" sm="6" md="4" lg="3" xl="2" >
-                      <CardBrandComponent name={v.name} img_url={v.icon} amount={`${v.countProduct} sản phẩm`} />
+                      <CardBrandComponent name={v.name} img_url={v.icon} amount={`${v.countProduct} sản phẩm`} handleClickAction={(mode)=>toggleAction(v.id, mode)}/>
                     </CCol>
                   ))
                 }
               </CFormGroup>
+              <CModal
+                scrollable
+                show={modalAction.visible}
+                onClose={toggleAction}
+                className="inactive-modal"
+              >
+                <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <CModalTitle>{modalAction.mode === "edit" ? "Sửa thương hiệu" : "Chi tiết thương hiệu"}</CModalTitle>
+                  <CButton onClick={toggleAction}><CIcon name='cil-x' size="sm" /></CButton>
+                </CModalHeader>
+                <CModalBody>
+                  <EditBrand brandId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle} />
+                </CModalBody>
+                <CModalFooter>
+                  <CButton color="secondary" onClick={toggleAction}>Đóng</CButton>
+                </CModalFooter>
+              </CModal>
             </CCardBody>
             <CCardFooter style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>Tổng: {brands.length}</div>
