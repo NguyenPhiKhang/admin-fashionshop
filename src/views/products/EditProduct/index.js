@@ -77,7 +77,7 @@ const EditProduct = props => {
         setAttributes(prev => ({
           ...prev, id: id, name, description, short_description: shortDescription, highlight, discount: promotionPercent,
           isFreeship: freeShip, category: category.id, parentCategory: parseInt(categories.split('/')[1]), brand: brand !== null ? brand.id : -1,
-          material, style, season: suitable_season, madein: madeIn === null ? "Khác" : madeIn, purpose
+          material, style, season: suitable_season, madein: madeIn === null ? "Không rõ" : madeIn, purpose
         }));
 
         // loadSubCategories(parseInt(categories.split('/')[1]))
@@ -126,7 +126,7 @@ const EditProduct = props => {
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data.concat({ id: -1, name: "Khác" }));
+    setBrands(data.concat({ id: -1, name: "Không rõ" }));
   };
 
   const loadSubCategories = async (idCategory) => {
@@ -183,11 +183,6 @@ const EditProduct = props => {
     else setFileList(filess);
 
     setLoadingImage(false);
-  }
-
-  const handleChangeRadioCategory = (value) => {
-    setAttributes(prev => ({ ...prev, parentCategory: parseInt(value) }));
-    loadSubCategories(value);
   }
 
   const handleCancel = () => setPreview({ visible: false });
@@ -305,6 +300,7 @@ const EditProduct = props => {
   }
   const handleChangeMode = new_mode => {
     setModeView(new_mode);
+    props.handleChangeTitle("edit");
   }
 
   const handleToggle = (event, nodeIds) => {
@@ -329,7 +325,7 @@ const EditProduct = props => {
   };
 
   const findPathCategories = async (id) => {
-    const response = await http.get(`/category/${id}/get-path`);
+    const response = await http.get(`/category/${id}/get-detail`);
     const data = response.data;
     return data;
   }
@@ -743,7 +739,7 @@ const EditProduct = props => {
                               marginLeft: 8, border: '1px solid #e6e6e6', padding: 5
                             }}>
                               <img className="img-thumbnail-table" alt="select" style={{ width: 60, height: '100%' }} src={file.value} onClick={() => { handlePreview(file) }} />
-                              <CButton className="button-delete-image" onClick={() => { handleDeleteImage(0, index) }}
+                              <CButton disabled={modeView === "edit" ? false : true} className="button-delete-image" onClick={() => { handleDeleteImage(0, index) }}
                                 style={{ width: 24, height: '100%', border: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <RemoveCircleOutlineOutlinedIcon style={{ color: '#ff8080' }} />
                               </CButton>

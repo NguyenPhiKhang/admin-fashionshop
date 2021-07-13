@@ -33,8 +33,7 @@ export default function CategoriesComponent(props) {
     nodes.length > 0 ?
       nodes.map(node => {
         return (
-          <TreeItem
-            TreeItem key={node.id} nodeId={node.id.toString()}
+          <TreeItem key={node.id} nodeId={node.id.toString()}
             label={
               <div>
                 <img alt="image_node" style={{ width: '0.875rem', height: 'auto', marginRight: 5 }} src={node.icon} />

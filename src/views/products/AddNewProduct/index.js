@@ -66,7 +66,7 @@ const AddNewProduct = props => {
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data.concat({ id: -1, name: "Khác" }));
+    setBrands(data.concat({ id: -1, name: "Không rõ" }));
   };
 
   const loadColor = async () => {
@@ -214,8 +214,8 @@ const AddNewProduct = props => {
     } else {
       const path = await findPathCategories(nodeIds);
 
-      if (path.subCategory)
-        setExpanded(path.categoryIds);
+      if (path.is_subcategory)
+        setExpanded(path.category_ids);
       else {
         setPathCategory(path);
         setSelected(nodeIds);
@@ -224,7 +224,7 @@ const AddNewProduct = props => {
   };
 
   const findPathCategories = async (id) => {
-    const response = await http.get(`/category/${id}/get-path`);
+    const response = await http.get(`/category/${id}/get-detail`);
     const data = response.data;
     return data;
   }

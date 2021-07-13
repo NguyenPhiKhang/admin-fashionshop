@@ -48,7 +48,7 @@ const _nav = [
       {
         _tag: 'CSidebarNavItem',
         name: 'Thương hiệu',
-        to: '/products/brand'
+        to: '/brands-product'
       },
       {
         _tag: 'CSidebarNavItem',

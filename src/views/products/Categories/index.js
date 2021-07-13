@@ -30,12 +30,10 @@ import {
 } from "@material-ui/core";
 
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
-import AddNewProduct from '../AddNewProduct';
-
-import EditProduct from '../EditProduct';
 import http from 'src/utils/http-common';
 import CategoriesComponent from 'src/components/Categories';
 import { getBase64 } from 'src/utils/ImageConst';
+import EditCategory from '../EditCategory';
 
 const fields = [
   { key: 'id', label: 'ID', _style: { width: '5%' } },
@@ -49,15 +47,11 @@ const fields = [
 const CategoriesPage = () => {
 
   const [categoriesData, setCategoriesData] = useState([]);
-  const [visibleModal, setVisibleModal] = useState(false);
   const [editModal, setEditModal] = useState({ visible: false, mode: 'detail', id: 0 });
-  const [categorySelected, setCategorySelected] = useState(0);
-  const [statusSelected, setStatusSelected] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [search, setSearch] = useState("")
 
   const [expanded, setExpanded] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -67,63 +61,48 @@ const CategoriesPage = () => {
   const [preview, setPreview] = useState({ visible: false, image: '', title: '' });
   const [loadingImage, setLoadingImage] = useState(false);
 
-  const [attributes, setAttributes] = useState({
-    name: '', description: '', short_description: '', highlight: '',
-    discount: 0, isFreeship: false, category: 0, brand: 0,
-    material: '', style: '', season: '', madein: '', purpose: ''
+  const [attrCategory, setAttrCategory] = useState({
+    name: '', path: ''
   });
 
-
-  const loadTotalPage = async () => {
-    const response = await http.get("/categories/count-record");
-    const data = await response.data;
-
-    let totalPageNew = Math.ceil(data / pageSize);
-
-    setTotalPage(totalPageNew);
-  }
-
-  const loadCategoriesData = async () => {
-    setLoading(true);
-    const response = await http.get(`/categories/get-all?p=${page}&p_size=${pageSize}`);
-    const data = await response.data;
-    setCategoriesData(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    console.log("useeffect 1")
-
-    if (page === 1)
-      loadCategoriesData();
-    else {
-      setPage(1);
-    }
-    loadTotalPage();
-  }, [statusSelected, categorySelected, search])
+  const [modalAction, setModalAction] = useState({ visible: false, mode: 'detail', id: 0 });
 
 
   useEffect(() => {
-    console.log("useeffect 2")
+    const loadCategoriesData = async () => {
+      setLoading(true);
+      const response = await http.get(`/categories/get-all?p=${page}&p_size=${pageSize}`);
+      const data = await response.data;
+      setCategoriesData(data);
+      setLoading(false);
+    };
+
     loadCategoriesData();
   }, [page]);
 
-  const toggle = () => {
-    setVisibleModal(prev => !prev);
-  }
+  useEffect(()=>{
+    const loadTotalPage = async () => {
+      const response = await http.get("/categories/count-record");
+      const data = await response.data;
+  
+      let totalPageNew = Math.ceil(data / pageSize);
+  
+      setTotalPage(totalPageNew);
+    }
+
+    loadTotalPage();
+  }, [])
 
   const toggleEdit = (id, mode) => {
-    setEditModal(prev => ({ id: id, mode: mode, visible: !prev.visible }));
+    setModalAction(prev => ({ id: id, mode: mode, visible: !prev.visible }));
   }
 
   const handleChangePage = number => {
     setPage(number);
   };
 
-  const handleChangeAtrribute = (attribute) => {
-    console.log(attribute)
-    setAttributes({ ...attributes, ...attribute });
-    console.log(attributes)
+  const handleChangeAttrCategory = (attribute) => {
+    setAttrCategory(prev=>({...prev, ...attribute}));
   }
 
   const handleToggle = (event, nodeIds) => {
@@ -138,8 +117,8 @@ const CategoriesPage = () => {
     } else {
       const path = await findPathCategories(nodeIds);
 
-      if (path.subCategory)
-        setExpanded(path.categoryIds);
+      if (path.is_subcategory)
+        setExpanded(path.category_ids);
 
       setSelected(nodeIds);
       setPathCategory(path);
@@ -147,7 +126,7 @@ const CategoriesPage = () => {
   };
 
   const findPathCategories = async (id) => {
-    const response = await http.get(`/category/${id}/get-path`);
+    const response = await http.get(`/category/${id}/get-detail`);
     const data = response.data;
     return data;
   }
@@ -185,6 +164,16 @@ const CategoriesPage = () => {
     files.splice(index, 1);
 
     setFileList(files);
+  }
+
+  const toggleAction = (id, mode)=>{
+    setModalAction(prev=>({id: id, mode: mode, visible: !prev.visible}))
+  }
+
+  const handleChangeTitle = title=>{
+    console.log("change tile")
+    if(title==="edit")
+      setModalAction(prev=>({...prev, mode: title}))
   }
 
 
@@ -225,7 +214,7 @@ const CategoriesPage = () => {
                       <CLabel htmlFor="material">Tên danh mục</CLabel>
                     </CCol>
                     <CCol xs="12">
-                      <CInput style={{ padding: 10, height: 'auto' }} size="normal" id="name-category" name="name-category" placeholder="Nhập tên danh mục..." value={attributes.material} onChange={(e) => { handleChangeAtrribute({ material: e.target.value }) }} />
+                      <CInput style={{ padding: 10, height: 'auto' }} size="normal" id="name-category" name="name-category" placeholder="Nhập tên danh mục..." value={attrCategory.name} onChange={(e) => { handleChangeAttrCategory({ name: e.target.value }) }} />
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row style={{ marginBottom: 30 }}>
@@ -233,7 +222,7 @@ const CategoriesPage = () => {
                       <CLabel htmlFor="style">Path</CLabel>
                     </CCol>
                     <CCol xs="12">
-                      <CInput style={{ padding: 10, height: 'auto' }} size="normal" id="path-category" name="path-category" placeholder="Nhập path..." value={attributes.style} onChange={(e) => { handleChangeAtrribute({ style: e.target.value }) }} />
+                      <CInput style={{ padding: 10, height: 'auto' }} size="normal" id="path-category" name="path-category" placeholder="Nhập path..." value={attrCategory.path} onChange={(e) => { handleChangeAttrCategory({ path: e.target.value }) }} />
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row style={{ marginBottom: 30 }}>
@@ -329,8 +318,8 @@ const CategoriesPage = () => {
                               {/* <VisibilityOutlinedIcon style={{ fontSize: 20 }} /> */}
                               {/* </IconButton> */}
                               <CDropdownMenu>
-                                <CDropdownItem>Xem chi tiết</CDropdownItem>
-                                <CDropdownItem>Chỉnh sửa</CDropdownItem>
+                                <CDropdownItem onClick={()=>{toggleAction(item.id, "detail")}}>Xem chi tiết</CDropdownItem>
+                                <CDropdownItem onClick={()=>{toggleAction(item.id, "edit")}}>Chỉnh sửa</CDropdownItem>
                               </CDropdownMenu>
                             </CDropdown>
                           </td>
@@ -371,35 +360,16 @@ const CategoriesPage = () => {
               </CFormGroup>
               <CModal
                 scrollable
-                show={visibleModal}
-                onClose={toggle}
-                size="xl"
+                show={modalAction.visible}
+                onClose={toggleAction}
                 className="inactive-modal"
               >
                 <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <CModalTitle>Thêm sản phẩm</CModalTitle>
-                  <CButton onClick={toggle}><CIcon name='cil-x' size="sm" /></CButton>
-                </CModalHeader>
-                <CModalBody>
-                  <AddNewProduct isHeader={false} />
-                </CModalBody>
-                <CModalFooter>
-                  <CButton color="secondary" onClick={toggle}>Đóng</CButton>
-                </CModalFooter>
-              </CModal>
-              <CModal
-                scrollable
-                show={editModal.visible}
-                onClose={toggleEdit}
-                size="xl"
-                className="inactive-modal"
-              >
-                <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <CModalTitle>{editModal.mode === "edit" ? "Sửa sản phẩm" : "Chi tiết sản phẩm"}</CModalTitle>
+                  <CModalTitle>{modalAction.mode === "edit" ? "Sửa danh mục" : "Chi tiết danh mục"}</CModalTitle>
                   <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditProduct productId={editModal.id} mode={editModal.mode} />
+                  <EditCategory categoryId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle}/>
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>

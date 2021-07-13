@@ -47,11 +47,31 @@
   border-color: #adb5bd;
 }
 
-tbody > tr:hover {
-  background-color:  rgba(49, 103, 235, 0.075) !important;
+tbody>tr:hover {
+  background-color: rgba(49, 103, 235, 0.075) !important;
 }
 
-.btn-image-plus:hover{
+.btn-image-plus:hover {
   background-color: rgba(44, 56, 74, 0.1);
   color: #000;
+}
+
+.card-brand-custom {
+  position: relative;
+  box-shadow: 0 0.1rem 0.25rem rgb(0 0 0 / 8%);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 0 solid rgba(222, 226, 230, .7);
+  border-radius: .25rem;
+  border-width: 1px !important;
+}
+
+.remove-ouline-focus:focus {
+  outline: 0;
+  // border: #fff;
+  // border-width: 0;
 }

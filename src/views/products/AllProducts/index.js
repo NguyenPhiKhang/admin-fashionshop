@@ -36,10 +36,11 @@ import http from 'src/utils/http-common';
 
 const fields = [
   { key: 'id', label: 'Id', _style: { width: '5%' } },
-  { key: 'name', label: 'Tên sản phẩm', _style: { width: '23%' } },
+  { key: 'name', label: 'Tên sản phẩm', _style: { width: '22%' } },
   { key: 'img_url', label: 'Ảnh', _style: { width: '10%' } },
-  { key: 'category', label: 'Danh mục', _style: { width: '20%' } },
-  { key: 'price', label: 'Giá', _style: { width: '15%' } },
+  { key: 'category', label: 'Danh mục', _style: { width: '15%' } },
+  { key: 'brand', label: 'Thương hiệu', _style: { width: '10%' } },
+  { key: 'price', label: 'Giá', _style: { width: '10%' } },
   { key: 'quantity', label: 'Tồn kho', _style: { width: '8%' } },
   { key: 'order_count', label: 'Đã bán', _style: { width: '8%' } },
   { key: 'action', label: 'Action', _style: { width: '10%' } }
@@ -129,6 +130,12 @@ const AllProducts = () => {
   const handleChangePage = number => {
     setPage(number);
   };
+
+  const handleChangeTitle = title => {
+    console.log("change tile")
+    if (title === "edit")
+      setEditModal(prev => ({ ...prev, mode: title }))
+  }
 
   return (
     <>
@@ -236,7 +243,13 @@ const AllProducts = () => {
                   'img_url':
                     (item) => (
                       <td className="td-middle">
-                        <img src={item.img_url} alt="imgae_product" width='60' className="img-thumbnail-table"/>
+                        <img src={item.img_url} alt="imgae_product" width='60' className="img-thumbnail-table" />
+                      </td>
+                    ),
+                  'brand':
+                    (item) => (
+                      <td className="td-middle">
+                        {item.brand}
                       </td>
                     ),
                 }}
@@ -272,7 +285,7 @@ const AllProducts = () => {
                   <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditProduct productId={editModal.id} mode={editModal.mode} />
+                  <EditProduct productId={editModal.id} mode={editModal.mode} handleChangeTitle={handleChangeTitle} />
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>
