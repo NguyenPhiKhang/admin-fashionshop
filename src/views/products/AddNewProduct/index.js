@@ -66,7 +66,7 @@ const AddNewProduct = props => {
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data.concat({ id: -1, name: "Không rõ" }));
+    setBrands(data);
   };
 
   const loadColor = async () => {
@@ -207,9 +207,10 @@ const AddNewProduct = props => {
   };
 
   const handleSelect = async (event, nodeIds) => {
+    
     let index = expanded.indexOf(nodeIds);
 
-    if (index > -1) {
+    if (index !== -1) {
       setExpanded(prev => prev.slice(index + 1, prev.length - index));
     } else {
       const path = await findPathCategories(nodeIds);
@@ -443,7 +444,7 @@ const AddNewProduct = props => {
                           <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect} />
                         </CDropdownMenu>
                       </CDropdown>
-                      <CInput disabled className="disable-detail" id="category-add" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
+                      <CInput disabled className="disable-detail" id="category-add-product" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
                     </CInputGroup>
                   </CCol>
                 </CFormGroup>

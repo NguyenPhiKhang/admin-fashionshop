@@ -63,7 +63,7 @@ const EditBrand = (props) => {
 
     setModeView(props.mode)
 
-  }, [props.categoryId, props.mode])
+  }, [props.brandId, props.mode])
 
 
   const handleChangeAttrBrand = (attribute) => {

@@ -35,7 +35,7 @@ import EditProduct from '../EditProduct';
 import http from 'src/utils/http-common';
 
 const fields = [
-  { key: 'id', label: 'Id', _style: { width: '5%' } },
+  { key: 'id', label: 'ID', _style: { width: '5%' } },
   { key: 'name', label: 'Tên sản phẩm', _style: { width: '22%' } },
   { key: 'img_url', label: 'Ảnh', _style: { width: '10%' } },
   { key: 'category', label: 'Danh mục', _style: { width: '15%' } },
@@ -192,8 +192,8 @@ const AllProducts = () => {
                 sorter={false}
                 scopedSlots={{
                   'action':
-                    (item) => (
-                      <td style={{ display: 'flex', alignItems: 'center', height: 97 }}>
+                    (item, i) => (
+                      <td style={{ display: 'flex', alignItems: 'center', height: 97, borderTop: i === 0 ? 0 : '1px solid #d8dbe0' }}>
                         <IconButton style={{ outline: 'none' }} title="Xem chi tiết" onClick={() => { toggleEdit(item.id, "detail") }}>
                           <VisibilityOutlinedIcon style={{ fontSize: 20 }} />
                         </IconButton>

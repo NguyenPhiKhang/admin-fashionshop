@@ -4,10 +4,10 @@
 const _nav = [
   {
     _tag: 'CSidebarNavItem',
-    name: 'Thống kê',
+    name: 'Dashboard',
     to: '/dashboard',
     // icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon" />,
-    icon: 'cil-bar-chart'
+    icon: 'cil-home'
     // badge: {
     //   color: 'info',
     //   text: 'NEW',
@@ -42,13 +42,13 @@ const _nav = [
       },
       {
         _tag: 'CSidebarNavItem',
-        name: 'Flash sale',
-        to: '/products/flash-sale'
+        name: 'Thương hiệu',
+        to: '/brands-product'
       },
       {
         _tag: 'CSidebarNavItem',
-        name: 'Thương hiệu',
-        to: '/brands-product'
+        name: 'Flash sale',
+        to: '/products/flash-sale'
       },
       {
         _tag: 'CSidebarNavItem',
@@ -57,28 +57,10 @@ const _nav = [
       },
     ]
   },
-  // {
-  //   _tag: 'CSidebarNavDropdown',
-  //   name: 'Quản lý danh mục',
-  //   route: '/categories',
-  //   icon: 'cil-border-all',
-  //   _children: [
-  //     {
-  //       _tag: 'CSidebarNavItem',
-  //       name: 'Tất cả danh mục',
-  //       to: '/categories/all-categories',
-  //     },
-  //     {
-  //       _tag: 'CSidebarNavItem',
-  //       name: 'Thêm mới danh mục',
-  //       to: '/products/add-new-category',
-  //     }
-  //   ]
-  // },
   {
     _tag: 'CSidebarNavItem',
     name: 'Quản lý đơn hàng',
-    route: '/orders',
+    to: '/orders/all',
     icon: 'cil-basket'
   },
   {
@@ -87,46 +69,36 @@ const _nav = [
     route: '/post',
     icon: 'cil-pencil'
   },
+  // {
+  //   _tag: 'CSidebarNavDropdown',
+  //   name: 'Quản lý nhân viên',
+  //   route: '/employees',
+  //   icon: 'cib-opsgenie',
+  //   _children: [
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Tất cả nhân viên',
+  //       to: '/employees/all',
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Thêm mới nhân viên',
+  //       to: '/employees/add-new-employee',
+  //     }
+  //   ]
+  // },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Quản lý người dùng',
+    to: '/users',
+    icon: 'cil-user'
+  },
 
   {
-    _tag: 'CSidebarNavTitle',
-    _children: ['Phân quyền']
-  },
-  {
-    _tag: 'CSidebarNavDropdown',
-    name: 'Quản lý nhân viên',
-    route: '/employees',
-    icon: 'cib-opsgenie',
-    _children: [
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Tất cả nhân viên',
-        to: '/employees/all',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Thêm mới nhân viên',
-        to: '/employees/add-new-employee',
-      }
-    ]
-  },
-  {
-    _tag: 'CSidebarNavDropdown',
-    name: 'Quản lý người dùng',
-    route: '/users',
-    icon: 'cil-user',
-    _children: [
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Tất cả người dùng',
-        to: '/users/all',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Thêm mới người dùng',
-        to: '/users/add-new-user',
-      }
-    ]
+    _tag: 'CSidebarNavItem',
+    name: 'Setting',
+    to: '/settings',
+    icon: 'cil-settings',
   },
 
   {

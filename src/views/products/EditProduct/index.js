@@ -85,7 +85,7 @@ const EditProduct = props => {
         const path = await findPathCategories(category.id);
         setPathCategory(path);
         setSelected(category.id.toString());
-        setExpanded(path.categoryIds);
+        setExpanded(path.category_ids);
 
         let is_color = attributes.some(a => a.id === 80);
         let is_size = attributes.some(s => s.id === 164);
@@ -126,7 +126,7 @@ const EditProduct = props => {
   const loadBrand = async () => {
     const response = await axios.get("http://localhost:8080/api/v1/brand/get-all");
     const data = await response.data;
-    setBrands(data.concat({ id: -1, name: "Không rõ" }));
+    setBrands(data);
   };
 
   const loadSubCategories = async (idCategory) => {
@@ -315,8 +315,8 @@ const EditProduct = props => {
     } else {
       const path = await findPathCategories(nodeIds);
 
-      if (path.subCategory)
-        setExpanded(path.categoryIds);
+      if (path.is_subcategory)
+        setExpanded(path.category_ids);
       else {
         setPathCategory(path);
         setSelected(nodeIds);
@@ -563,7 +563,7 @@ const EditProduct = props => {
                           <CategoriesComponent expanded={expanded} selected={selected} onNodeToggle={handleToggle} onNodeSelect={handleSelect} />
                         </CDropdownMenu>
                       </CDropdown>
-                      <CInput disabled className="disable-detail" id="category" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
+                      <CInput disabled className="disable-detail" id="category-edit-product" name="category" placeholder="chọn danh mục..." value={pathCategory.name} />
                     </CInputGroup>
                   </CCol>
                 </CFormGroup>

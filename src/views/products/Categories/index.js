@@ -106,6 +106,8 @@ const CategoriesPage = () => {
   };
 
   const handleSelect = async (event, nodeIds) => {
+
+    console.log(expanded)
     let index = expanded.indexOf(nodeIds);
 
     if (index > -1) {
@@ -306,8 +308,8 @@ const CategoriesPage = () => {
                     sorter={false}
                     scopedSlots={{
                       'action':
-                        (item) => (
-                          <td className="td-middle">
+                        (item, i) => (
+                          <td className="td-middle" style={{borderTop: i===0?0:'1px solid #d8dbe0'}}>
                             <CDropdown className="m-1">
                               <CDropdownToggle color="white dropdown-table" size="lg" />
                               {/* <IconButton style={{ outline: 'none' }} title="Xem chi tiết" onClick={() => { toggleEdit(item.id, "detail") }}> */}

@@ -41,6 +41,7 @@ const AllProducts = React.lazy(() => import("./views/products/AllProducts"));
 const AddNewProducts = React.lazy(() => import("./views/products/AddNewProduct"));
 const CategoriesPage = React.lazy(() => import("./views/products/Categories"));
 const BrandsProductPage = React.lazy(() => import("./views/products/Brands"));
+const AllOrders = React.lazy(() => import("./views/orders/AllOrders"));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -81,14 +82,16 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/notifications/toaster', name: 'Toaster', component: Toaster },
   { path: '/widgets', name: 'Widgets', component: Widgets },
-  { path: '/users', exact: true, name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User },
+  { path: '/template/users', exact: true, name: 'Users', component: Users },
+  { path: '/template/users/:id', exact: true, name: 'User Details', component: User },
 
   { path: '/products', exact: true, name: 'Products', component: AllProducts },
   { path: '/products/all-products', name: 'All Products', component: AllProducts },
   { path: '/products/add-new-products', name: 'Add New Products', component: AddNewProducts },
-  { path: '/categories', name: 'CategoriesPage', component: CategoriesPage },
-  { path: '/brands-product', name: 'BrandsProductPage', component: BrandsProductPage }
+  { path: '/categories', name: 'Categories', component: CategoriesPage },
+  { path: '/brands-product', name: 'Brand Products', component: BrandsProductPage },
+  { path: '/orders', exact: true, name: 'All Orders', component: AllOrders },
+  { path: '/orders/all', name: 'All Orders', component: AllOrders }
 
 ];
 

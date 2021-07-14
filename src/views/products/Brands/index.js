@@ -17,7 +17,8 @@ import {
   CFormGroup,
   CSelect,
   CCardFooter,
-  CPagination
+  CPagination,
+  CSpinner
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -35,6 +36,7 @@ import EditProduct from '../EditProduct';
 import http from 'src/utils/http-common';
 import CardBrandComponent from 'src/components/Brand/CardBrand';
 import EditBrand from '../EditBrand';
+import AddNewBrand from '../AddNewBrand';
 
 const fields = [
   { key: 'id', label: 'Id', _style: { width: '5%' } },
@@ -51,12 +53,11 @@ const fields = [
 const BrandsPage = () => {
 
   const [loading, setLoading] = useState(true);
-  const [total, setTotal] = useState(1);
   const [search, setSearch] = useState("")
   const [brands, setBrands] = useState([]);
   const [visibleModal, setVisibleModal] = useState(false);
 
-  const [modalAction, setModalAction] = useState({ visible: false, mode: 'detail', id: 0 });
+  const [modalAction, setModalAction] = useState({ visible: false, mode: '', id: 0 });
 
   useEffect(() => {
     const loadBrands = async () => {
@@ -67,6 +68,7 @@ const BrandsPage = () => {
     }
 
     loadBrands();
+    setLoading(false);
   }, [search])
 
   const toggle = () => {
@@ -74,17 +76,18 @@ const BrandsPage = () => {
   }
 
   const handleSearch = (e) => {
+    setLoading(true)
     setSearch(e.target.value)
   }
 
-  const toggleAction = (id, mode)=>{
-    setModalAction(prev=>({id: id, mode: mode, visible: !prev.visible}))
+  const toggleAction = (id, mode) => {
+    setModalAction(prev => ({ id: id, mode: mode, visible: !prev.visible }))
   }
 
-  const handleChangeTitle = title=>{
+  const handleChangeTitle = title => {
     console.log("change tile")
-    if(title==="edit")
-      setModalAction(prev=>({...prev, mode: title}))
+    if (title === "edit")
+      setModalAction(prev => ({ ...prev, mode: title }))
   }
 
   return (
@@ -106,15 +109,35 @@ const BrandsPage = () => {
               </CFormGroup>
             </CCardHeader>
             <CCardBody>
+              <CFormGroup row style={{ display: loading?'flex':'none', alignItems: 'center', justifyContent: 'center' }}>
+                <CSpinner color="primary" variant="grow" />
+              </CFormGroup>
               <CFormGroup row>
                 {
                   brands.map((v, i) => (
-                    <CCol xs="12" sm="6" md="4" lg="3" xl="2" >
-                      <CardBrandComponent name={v.name} img_url={v.icon} amount={`${v.countProduct} sản phẩm`} handleClickAction={(mode)=>toggleAction(v.id, mode)}/>
+                    <CCol key={v.id} xs="12" sm="6" md="4" lg="3" xl="2" >
+                      <CardBrandComponent name={v.name} img_url={v.icon} amount={`${v.countProduct} sản phẩm`} handleClickAction={(mode) => toggleAction(v.id, mode)} />
                     </CCol>
                   ))
                 }
               </CFormGroup>
+              <CModal
+                scrollable
+                show={visibleModal}
+                onClose={toggle}
+                className="inactive-modal"
+              >
+                <CModalHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <CModalTitle>Thêm thương hiệu</CModalTitle>
+                  <CButton onClick={toggle}><CIcon name='cil-x' size="sm" /></CButton>
+                </CModalHeader>
+                <CModalBody>
+                  <AddNewBrand />
+                </CModalBody>
+                <CModalFooter>
+                  <CButton color="secondary" onClick={toggle}>Đóng</CButton>
+                </CModalFooter>
+              </CModal>
               <CModal
                 scrollable
                 show={modalAction.visible}
