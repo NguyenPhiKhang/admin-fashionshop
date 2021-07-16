@@ -62,7 +62,8 @@ const AllProducts = () => {
 
 
   const loadTotalPage = async () => {
-    const response = await http.get(`/products/count-product-filter?category_id=${categorySelected}&status=${statusSelected}&search=${search}`);
+    
+    const response = search!==""? await http.get(`/products/count-product-filter?category_id=${categorySelected}&status=${statusSelected}&search=${search}`):await http.get(`/products/count-product-filter?category_id=${categorySelected}&status=${statusSelected}`);
     const data = await response.data;
 
     let totalPageNew = Math.ceil(data / pageSize);

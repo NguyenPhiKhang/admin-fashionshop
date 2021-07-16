@@ -68,7 +68,8 @@ const UserPage = () => {
 
 
   const loadTotalPage = async () => {
-    const response = await http.get(`/users/count-users-filter?status=${statusSelected}&search=${search}`);
+    const response = search !== "" ? await http.get(`/users/count-users-filter?status=${statusSelected}&search=${search}`) :
+      await http.get(`/users/count-users-filter?status=${statusSelected}`);
     const data = await response.data;
 
     let totalPageNew = Math.ceil(data / pageSize);
@@ -78,7 +79,8 @@ const UserPage = () => {
 
   const loadUsers = async () => {
     setLoading(true);
-    const response = await http.get(`/users/get-users-filter?status=${statusSelected}&p=${page}&p_size=${pageSize}&search=${search}`);
+    const response = search !== ""?await http.get(`/users/get-users-filter?status=${statusSelected}&p=${page}&p_size=${pageSize}&search=${search}`):
+    await http.get(`/users/get-users-filter?status=${statusSelected}&p=${page}&p_size=${pageSize}`);
     const data = await response.data;
 
     console.log(data)
