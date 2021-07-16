@@ -4,6 +4,7 @@ import { SET_USER_DATA, USER_LOGGED_OUT } from "../const/UserConst";
 
 export function setUserData(user) {
   return dispatch => {
+    jwtAuthService.setUser(user)
     dispatch({
       type: SET_USER_DATA,
       data: user

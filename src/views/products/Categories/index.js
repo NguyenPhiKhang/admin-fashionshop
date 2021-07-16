@@ -243,15 +243,15 @@ const CategoriesPage = () => {
                   </CFormGroup>
                   <CFormGroup style={{ marginBottom: 30 }}>
                     <CInputFile
-                      id={`file-input`}
-                      name={`file-input`}
+                      id={`file-input-category`}
+                      name={`file-input-category`}
                       custom
                       hidden
                       onChange={(e) => { fileChanged(e) }}
                     />
                     <CLabel htmlFor="images">Icon</CLabel>
                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                      <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById(`file-input`).click() }}>
+                      <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80 }} onClick={() => { document.getElementById(`file-input-category`).click() }}>
                         <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
                       </CButton>
                       {

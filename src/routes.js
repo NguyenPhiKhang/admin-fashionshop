@@ -43,6 +43,7 @@ const CategoriesPage = React.lazy(() => import("./views/products/Categories"));
 const BrandsProductPage = React.lazy(() => import("./views/products/Brands"));
 const AllOrders = React.lazy(() => import("./views/orders/AllOrders"));
 const UserPage = React.lazy(()=>import("./views/users"));
+const InfoAdmin = React.lazy(()=>import("./views/Admin"));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -94,7 +95,8 @@ const routes = [
   { path: '/orders', exact: true, name: 'All Orders', component: AllOrders },
   { path: '/orders/all', name: 'All Orders', component: AllOrders },
 
-  { path: '/users', name: 'All Users', component: UserPage }
+  { path: '/users', name: 'All Users', component: UserPage },
+  { path: '/setttings/profile', name: 'Settings', component: InfoAdmin }
 
 ];
 

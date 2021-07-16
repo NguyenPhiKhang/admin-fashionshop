@@ -95,10 +95,17 @@ const _nav = [
   },
 
   {
-    _tag: 'CSidebarNavItem',
-    name: 'Setting',
-    to: '/settings',
+    _tag: 'CSidebarNavDropdown',
+    name: 'Cài đặt',
+    route: '/settings',
     icon: 'cil-settings',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Thông tin cá nhân',
+        to: '/setttings/profile'
+      },
+    ]
   },
 
   {

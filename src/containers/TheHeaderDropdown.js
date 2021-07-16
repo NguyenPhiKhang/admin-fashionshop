@@ -24,7 +24,6 @@ const TheHeaderDropdown = (props) => {
       const data = await jwtAuthService.loginWithToken();
       console.log(data)
       if (data.success === 1) {
-        setUser({ image_url: data.data.user.image_url, name: data.data.user.name })
         props.setUserData(data.data);
         // history.push("/");
       } else {
@@ -34,6 +33,12 @@ const TheHeaderDropdown = (props) => {
 
     checkLogin();
   }, [])
+
+  useEffect(() => {
+    if(typeof(props.userData)!=="undefined")
+      setUser({ image_url: props.userData.image_url, name: props.userData.name })
+
+  }, [props.userData])
 
   const handleClickSignOut = () => {
     props.logoutUser();
@@ -47,10 +52,10 @@ const TheHeaderDropdown = (props) => {
       direction="down"
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
-        <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(44, 56, 74, 0.1)', borderRadius: 20 }}>
-          <span style={{ padding: 4 }}>{user.name}</span>
+        <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(44, 56, 74, 0.1)', borderRadius: 30, height: 50 }}>
+          <span style={{ padding: 15, fontWeight: 'bold' }}>{user.name}</span>
           <div className="c-avatar">
-            <img src={user.image_url} style={{ width: 50, height: 50, borderRadius: 30, backgroundColor: 'red' }} />
+            <img src={user.image_url} style={{ width: 50, height: 50, borderRadius: 30 }} />
           </div>
         </div>
       </CDropdownToggle>

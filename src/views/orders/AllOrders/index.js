@@ -121,6 +121,11 @@ const AllOrders = () => {
       setEditModal(prev => ({ ...prev, mode: title }))
   }
 
+  const handleReloadPage = ()=>{
+    // console.log("reload")
+    loadOrders();
+  }
+
   return (
     <>
       <CRow>
@@ -227,7 +232,7 @@ const AllOrders = () => {
                   <CButton onClick={toggleEdit}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditOrder orderId={editModal.id} mode={editModal.mode} handleChangeTitle={handleChangeTitle} />
+                  <EditOrder reloadPage={handleReloadPage} orderId={editModal.id} mode={editModal.mode} handleChangeTitle={handleChangeTitle} />
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleEdit}>Đóng</CButton>

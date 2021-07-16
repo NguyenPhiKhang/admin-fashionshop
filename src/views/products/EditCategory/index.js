@@ -115,7 +115,7 @@ const EditCategory = (props) => {
     }
     const filess = await Promise.all(files.map(async f => {
       const preview = await getBase64(f);
-      return { filename: await f, preview: await preview };
+      return { filename: await f, value: await preview };
     }));
     setFileList(filess);
 
@@ -255,15 +255,15 @@ const EditCategory = (props) => {
                 </CFormGroup>
                 <CFormGroup style={{ marginBottom: 30 }}>
                   <CInputFile
-                    id={`file-input`}
-                    name={`file-input`}
+                    id={`file-input-edit-category`}
+                    name={`file-input-edit-category`}
                     custom
                     hidden
                     onChange={(e) => { fileChanged(e) }}
                   />
                   <CLabel htmlFor="images">Icon</CLabel>
                   <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-                    <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80, display: modeView === "edit" ? "inline" : "none" }} onClick={() => { document.getElementById(`file-input`).click() }}>
+                    <CButton className="btn-image-plus" variant="outline" color="dark" style={{ width: 80, height: 80, display: modeView === "edit" ? "inline" : "none" }} onClick={() => { document.getElementById(`file-input-edit-category`).click() }}>
                       <CIcon name="cil-plus" size="lg" /><br /><small>Thêm ảnh</small>
                     </CButton>
                     {

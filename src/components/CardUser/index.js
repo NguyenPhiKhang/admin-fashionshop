@@ -19,7 +19,10 @@ const CardUserComponent = (props) => {
         <div className="card-text-user">
           <p style={{ margin: 0 }}>ID: {props.id_user}</p>
           <p>{props.email}</p>
-          <CButton block color="light">Xem chi tiết</CButton>
+          <div style={{display: 'flex'}}>
+            <CButton block color="light" style={{margin: 3}}>Chi tiết</CButton>
+            <CButton block color="danger" style={{margin: 3}}>Khoá</CButton>
+          </div>
           {/* <CButton block variant="outline" color="info">Xem chi tiết</CButton> */}
         </div>
       </div>

@@ -39,6 +39,7 @@ import EditProduct from 'src/views/products/EditProduct';
 
 import PersonIcon from '@material-ui/icons/Person';
 import { LocalShipping, LocationOn, SaveRounded } from '@material-ui/icons';
+import swal from 'sweetalert';
 
 const fields = [
   { key: 'product', label: 'Sản phẩm', _style: { width: '40%' } },
@@ -100,21 +101,21 @@ const EditOrder = props => {
   const [modeView, setModeView] = useState("");
 
 
-  useEffect(() => {
-    const loadOrderDetail = async () => {
-      console.log(props.orderId)
-      if (typeof (props.orderId) === "number" && props.orderId !== 0) {
-        const response = await http.get(`/order/${props.orderId}/detail-order`);
-        const data = await response.data;
-        if (data === null || data === '' || typeof (data) === "undefined")
-          return;
+  const loadOrderDetail = async () => {
+    console.log(props.orderId)
+    if (typeof (props.orderId) === "number" && props.orderId !== 0) {
+      const response = await http.get(`/order/${props.orderId}/detail-order`);
+      const data = await response.data;
+      if (data === null || data === '' || typeof (data) === "undefined")
+        return;
 
 
-        setDetailOrder(data);
-        setStatusSelected(data.statusOrder.id)
-      }
+      setDetailOrder(data);
+      setStatusSelected(data.statusOrder.id)
     }
+  }
 
+  useEffect(() => {
     loadOrderDetail();
 
     setModeView(props.mode)
@@ -131,6 +132,27 @@ const EditOrder = props => {
 
   const handleSelectStatus = (e) => {
     setStatusSelected(prev => e.target.value)
+  }
+
+  const handleSaveStatus = async (e) => {
+    const response = await http.put(`/order/${detailOrder.id}/update-status?stt=${statusSelected}`);
+    const data = await response.data;
+
+    console.log(data);
+    swal({
+      title: `${data}`,
+      // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
+      icon: "success",
+      buttons: {
+        ok: "Đồng ý",
+      },
+      // dangerMode: true,
+    }).then((value) => {
+      if (value === 'ok') {
+        loadOrderDetail();
+        props.reloadPage();
+      }
+    });
   }
 
   return (
@@ -151,8 +173,8 @@ const EditOrder = props => {
                 </CCol>
                 <CCol xs="12" sm="8" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <CCol xs="12" sm="5">
-                    <div style={{ display: 'flex' , flexDirection: 'column'}}>
-                      <p style={{marginBottom: 2}}>Trạng thái đơn hàng</p>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <p style={{ marginBottom: 2 }}>Trạng thái đơn hàng</p>
                       <div style={{ display: 'flex' }}>
                         <CSelect
                           style={{ padding: 12, height: 'auto', marginRight: 5 }}
@@ -167,7 +189,7 @@ const EditOrder = props => {
                           <option value="5" key={5}>Đã huỷ</option>
                           <option value="6" key={6}>Trả hàng</option>
                         </CSelect>
-                        <Button title="Lưu thay đổi" color="primary" style={{ display: statusSelected.toString() !== detailOrder.statusOrder.id.toString() ? "inline" : "none", border: '1px solid rgba(108, 117, 125, 0.2)', outline: 0 }}>
+                        <Button title="Lưu thay đổi" color="primary" style={{ display: statusSelected.toString() !== detailOrder.statusOrder.id.toString() ? "inline" : "none", border: '1px solid rgba(108, 117, 125, 0.2)', outline: 0 }} onClick={handleSaveStatus}>
                           <SaveRounded />
                         </Button>
                       </div>

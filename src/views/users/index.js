@@ -80,6 +80,8 @@ const UserPage = () => {
     setLoading(true);
     const response = await http.get(`/users/get-users-filter?status=${statusSelected}&p=${page}&p_size=${pageSize}&search=${search}`);
     const data = await response.data;
+
+    console.log(data)
     setUsers(data);
     setLoading(false);
   };

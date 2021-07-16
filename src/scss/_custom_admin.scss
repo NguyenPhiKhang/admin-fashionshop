@@ -1,0 +1,74 @@
+.card-admin-component {
+  position: relative;
+  // box-shadow: 0 0.1rem 0.25rem rgb(0 0 0 / 8%);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 0 solid rgba(222, 226, 230, .7);
+  border-radius: .25rem;
+  margin-bottom: 20px;
+}
+
+.card-admin-component .card-header-admin {
+  position: relative;
+  height: 120px;
+  background-color: #fff !important;
+  text-align: center;
+}
+
+.image-admin-component {
+  width: 180px;
+  height: 180px;
+  border-radius: 100%;
+  border: 3px solid #fff;
+}
+
+.card-admin-component .image-admin-component {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 100%;
+}
+
+.card-body-admin {
+  flex: 1 1 auto;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.card-name-admin {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 3.2rem !important;
+  margin-bottom: 1rem;
+}
+
+.card-text-admin {
+  color: #adb5bd !important;
+  font-size: 1rem;
+}
+
+.card-text-admin:last-child {
+  margin-bottom: 0;
+}
+
+.my-5-info {
+  margin-top: 3rem !important;
+  margin-bottom: 3rem !important;
+  // margin: 0rem 0;
+  // color: #6c757d;
+  // background-color: "#ffff";
+  // border: 0;
+  // opacity: .25;
+}
+
+.box-password{
+  padding: 0.8rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(108, 117, 125, 0.2);
+  background: #fff;
+  background-color: #f8f9fa !important;
+}

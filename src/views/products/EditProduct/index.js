@@ -568,34 +568,34 @@ const EditProduct = props => {
                   </CCol>
                 </CFormGroup>
                 {/* <CFormGroup row>
-                    <CCol md="3" style={{ display: 'flex', alignItems: 'center' }}>
-                      <CLabel>Danh mục</CLabel>
-                    </CCol>
-                    <CCol md="9">
-                      <FormControl component="fieldset" >
-                        <RadioGroup row aria-label="categories-edit" name="categories-edit" style={{ display: 'flex', alignItems: 'center' }}
-                          onChange={(e) => { handleChangeRadioCategory(e.target.value) }} value={attributes.parentCategory}>
-                          <FormControlLabel style={{ display: (attributes.parentCategory === 16 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={16} control={<Radio size="small" color="primary" />} label="Thời trang nam" />
-                          <FormControlLabel style={{ display: (attributes.parentCategory === 17 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={17} control={<Radio size="small" color="primary" />} label="Thời trang nữ" />
-                          <FormControlLabel style={{ display: (attributes.parentCategory === 324 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={324} control={<Radio size="small" color="primary" />} label="Làm đẹp" />
-                        </RadioGroup>
-                      </FormControl>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="sub_cateogires">Danh mục con</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="sub-categories" id="sub-cateogories" value={attributes.category} onChange={(e) => { handleChangeAtrribute({ category: e.target.value }) }}>
+                  <CCol md="3" style={{ display: 'flex', alignItems: 'center' }}>
+                    <CLabel>Danh mục</CLabel>
+                  </CCol>
+                  <CCol md="9">
+                    <FormControl component="fieldset" >
+                      <RadioGroup row aria-label="categories-edit" name="categories-edit" style={{ display: 'flex', alignItems: 'center' }}
+                        onChange={(e) => { handleChangeRadioCategory(e.target.value) }} value={attributes.parentCategory}>
+                        <FormControlLabel style={{ display: (attributes.parentCategory === 16 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={16} control={<Radio size="small" color="primary" />} label="Thời trang nam" />
+                        <FormControlLabel style={{ display: (attributes.parentCategory === 17 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={17} control={<Radio size="small" color="primary" />} label="Thời trang nữ" />
+                        <FormControlLabel style={{ display: (attributes.parentCategory === 324 && modeView === "detail") || modeView === "edit" ? "inline" : "none" }} value={324} control={<Radio size="small" color="primary" />} label="Làm đẹp" />
+                      </RadioGroup>
+                    </FormControl>
+                  </CCol>
+                </CFormGroup> */}
+                {/* <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="sub_cateogires">Danh mục con</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CSelect className="disable-detail" disabled={modeView === "edit" ? false : true} custom name="sub-categories" id="sub-cateogories" value={attributes.category} onChange={(e) => { handleChangeAtrribute({ category: e.target.value }) }}>
 
-                        <option value="0" key={0}>Chọn danh mục con</option>
-                        {
-                          subCategories.map(v => <option value={v.id} key={v.id}>{v.name}</option>)
-                        }
-                      </CSelect>
-                    </CCol>
-                  </CFormGroup> */}
+                      <option value="0" key={0}>Chọn danh mục con</option>
+                      {
+                        subCategories.map(v => <option value={v.id} key={v.id}>{v.name}</option>)
+                      }
+                    </CSelect>
+                  </CCol>
+                </CFormGroup> */}
                 <CFormGroup row>
                   <CCol md="3">
                     <CLabel htmlFor="brand">Thương hiệu</CLabel>
