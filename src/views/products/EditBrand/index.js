@@ -55,7 +55,7 @@ const EditBrand = (props) => {
           return;
         setAttrBrand(prev => ({ ...prev, id: data.id, name: data.name }));
 
-        setFileList([{ id: data.id, value: data.icon }])
+        setFileList([{ id: data.id, value: data.icon, filename: null }])
       }
     }
 
@@ -111,38 +111,36 @@ const EditBrand = (props) => {
     props.handleChangeTitle("edit");
   }
 
-  const handleSaveChange = (e) => {
-    e.preventDefault();
+  const handleSaveChange = async (e) => {
+
+    const formData = new FormData();
+    formData.append("name", attrBrand.name);
+    formData.append("id", attrBrand.id)
+    if (fileList[0].filename !== null) formData.append("icon", fileList[0].filename);
+
+    const response = await http.post("/brand/create-new", formData);
+    const data = await response.data;
+
     swal({
-      title: "Bạn muốn lưu những thay đổi?",
+      title: `${data}`,
       // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
-      icon: "info",
+      icon: "success",
       buttons: {
         ok: "Đồng ý",
-        cancel: "Huỷ"
       },
       // dangerMode: true,
     }).then((value) => {
       if (value === 'ok') {
-        // setAttributes({
-        //   name: '', description: '', short_description: '', highlight: '',
-        //   discount: 0, isFreeship: false, category: 0, brand: 0,
-        //   material: '', style: '', season: '', madein: '', purpose: ''
-        // });
-        // setListOptions([{ id: 1, color: 0, size: 0, price: 0, quantity: 0, images: [] }]);
-        // setIsColor(true);
-        // setIsSize(true);
-        swal("Đã lưu thay đổi", {
-          icon: "success",
-        });
+        // loadOrderDetail();
+        props.reloadPage();
       }
     });
   }
 
-  const handleDeleteProduct = (e) => {
+  const handleDeleteBrand = (e) => {
     e.preventDefault();
     swal({
-      title: "Bạn muốn xoá sản phẩm này?",
+      title: "Bạn muốn xoá thương hiệu này?",
       // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
       icon: "warning",
       buttons: {
@@ -150,19 +148,44 @@ const EditBrand = (props) => {
         cancel: "Huỷ"
       },
       // dangerMode: true,
-    }).then((value) => {
+    }).then( async (value) => {
       if (value === 'ok') {
-        // setAttributes({
-        //   name: '', description: '', short_description: '', highlight: '',
-        //   discount: 0, isFreeship: false, category: 0, brand: 0,
-        //   material: '', style: '', season: '', madein: '', purpose: ''
-        // });
-        // setListOptions([{ id: 1, color: 0, size: 0, price: 0, quantity: 0, images: [] }]);
-        // setIsColor(true);
-        // setIsSize(true);
-        swal("Xoá sản phẩm thành công", {
-          icon: "success",
-        });
+        const response = await http.delete(`/brand/${attrBrand.id}/delete`);
+        const data = await response.data;
+
+
+        if(data.data===1){
+          swal({
+            title: `${data.message}`,
+            // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
+            icon: "success",
+            buttons: {
+              ok: "Đồng ý",
+            },
+            // dangerMode: true,
+          }).then((value) => {
+            if (value === 'ok') {
+              // loadOrderDetail();
+              props.reloadPage();
+              props.closeModal();
+            }
+          });
+        }else{
+          swal({
+            title: `${data.message}`,
+            // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
+            icon: "error",
+            buttons: {
+              ok: "Đồng ý",
+            },
+            // dangerMode: true,
+          }).then((value) => {
+            if (value === 'ok') {
+              // loadOrderDetail();
+              // props.reloadPage();
+            }
+          });
+        }
       }
     });
   }
@@ -196,6 +219,7 @@ const EditBrand = (props) => {
                     name={`file-input`}
                     custom
                     hidden
+                    value={[]}
                     onChange={(e) => { fileChanged(e) }}
                   />
                   <CLabel htmlFor="images">Icon</CLabel>
@@ -242,7 +266,7 @@ const EditBrand = (props) => {
                 <CFormGroup>
                   <CButton style={{ display: modeView === "detail" ? "inline" : "none", marginRight: 10 }} type="button" size="sm" color="info" onClick={() => { handleChangeMode("edit") }}><CIcon name="cil-pen" style={{ paddingRight: 2 }} />Sửa sản phẩm</CButton>
                   <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="primary" onClick={(e) => { handleSaveChange(e) }}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Lưu lại</CButton>
-                  <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="danger" onClick={(e) => { handleDeleteProduct(e) }}>
+                  <CButton style={{ display: modeView === "detail" ? "none" : "inline", marginRight: 10 }} type="button" size="sm" color="danger" onClick={(e) => { handleDeleteBrand(e) }}>
                     <DeleteOutline style={{ paddingRight: 2, fontSize: 22 }} />
                     Xoá sản phẩm</CButton>
                 </CFormGroup>

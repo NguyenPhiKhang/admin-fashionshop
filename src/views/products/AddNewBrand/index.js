@@ -100,6 +100,33 @@ const AddNewBrand = (props) => {
 
   const handleCancel = () => setPreview({ visible: false });
 
+  const handleAddBrand = async ()=>{
+    const formData = new FormData();
+    formData.append("name", attrBrand.name);
+    formData.append("id", 0)
+    if (fileList[0].filename !== null) formData.append("icon", fileList[0].filename);
+
+    const response = await http.post("/brand/create-new", formData);
+    const data = await response.data;
+
+    swal({
+      title: `${data}`,
+      // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
+      icon: "success",
+      buttons: {
+        ok: "Đồng ý",
+      },
+      // dangerMode: true,
+    }).then((value) => {
+      if (value === 'ok') {
+        // loadOrderDetail();
+        // props.reloadPage();
+        setAttrBrand({ name: ''});
+        setFileList([]);
+      }
+    });
+  }
+
   return (
     <>
       <CFormGroup className="form-horizontal">
@@ -165,7 +192,7 @@ const AddNewBrand = (props) => {
                   </div>
                 </CFormGroup>
                 <CFormGroup>
-                  <CButton type="submit" size="sm" color="primary" style={{ marginRight: 10 }}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Thêm</CButton>
+                  <CButton type="submit" size="sm" color="primary" style={{ marginRight: 10 }} onClick={handleAddBrand}><CIcon name="cil-save" style={{ paddingRight: 2 }} />Thêm</CButton>
                   <CButton type="reset" size="sm" color="dark" style={{ marginRight: 10 }} onClick={(e) => { handleReload(e) }}><CIcon name="cil-reload" style={{ paddingRight: 2 }} />Làm mới</CButton>
                 </CFormGroup>
               </CCardBody>

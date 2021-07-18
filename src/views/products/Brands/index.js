@@ -59,13 +59,14 @@ const BrandsPage = () => {
 
   const [modalAction, setModalAction] = useState({ visible: false, mode: '', id: 0 });
 
-  useEffect(() => {
-    const loadBrands = async () => {
-      const response = await http.get(`/brand/get-filter?search=${search}`);
-      const data = await response.data;
+  const loadBrands = async () => {
+    const response = await http.get(`/brand/get-filter?search=${search}`);
+    const data = await response.data;
 
-      setBrands(data);
-    }
+    setBrands(data);
+  }
+
+  useEffect(() => {
 
     loadBrands();
     setLoading(false);
@@ -88,6 +89,15 @@ const BrandsPage = () => {
     console.log("change tile")
     if (title === "edit")
       setModalAction(prev => ({ ...prev, mode: title }))
+  }
+
+  const handleReloadPage = ()=>{
+    loadBrands();
+  }
+  
+  const handleCloseModal = ()=>{
+    console.log("close")
+    setModalAction(prev=>({...prev, visible: !prev.visible}))
   }
 
   return (
@@ -149,7 +159,7 @@ const BrandsPage = () => {
                   <CButton onClick={toggleAction}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditBrand brandId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle} />
+                  <EditBrand closeModal={handleCloseModal} reloadPage={handleReloadPage} brandId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle} />
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleAction}>Đóng</CButton>

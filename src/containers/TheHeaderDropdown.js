@@ -45,6 +45,10 @@ const TheHeaderDropdown = (props) => {
     history.push("/login");
   }
 
+  const handleClickProfile = ()=>{
+    history.push("/profile/user")
+  }
+
   return (
     <CDropdown
       inNav
@@ -68,7 +72,7 @@ const TheHeaderDropdown = (props) => {
         >
           <strong>Tài khoản</strong>
         </CDropdownItem>
-        <CDropdownItem>
+        <CDropdownItem onClick={handleClickProfile}>
           <CIcon name="cil-user" className="mfe-2" />Xem thông tin
         </CDropdownItem>
         <CDropdownItem divider />

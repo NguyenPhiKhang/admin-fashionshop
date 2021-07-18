@@ -34,6 +34,7 @@ import http from 'src/utils/http-common';
 import CategoriesComponent from 'src/components/Categories';
 import { getBase64 } from 'src/utils/ImageConst';
 import EditCategory from '../EditCategory';
+import swal from 'sweetalert';
 
 const fields = [
   { key: 'id', label: 'ID', _style: { width: '5%' } },
@@ -67,38 +68,56 @@ const CategoriesPage = () => {
 
   const [modalAction, setModalAction] = useState({ visible: false, mode: 'detail', id: 0 });
 
+  const [search, setSearch] = useState("")
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value)
+  }
+
+  const loadCategoriesData = async () => {
+    setLoading(true);
+    const response = await http.get(`/categories/get-all?p=${page}&p_size=${pageSize}&search=${search}`);
+    const data = await response.data;
+    setCategoriesData(data);
+    setLoading(false);
+  };
+
+  const loadTotalPage = async () => {
+    const response = await http.get(`/categories/count-record?search=${search}`);
+    const data = await response.data;
+
+    let totalPageNew = Math.ceil(data / pageSize);
+
+    setTotalPage(totalPageNew);
+  }
 
   useEffect(() => {
-    const loadCategoriesData = async () => {
-      setLoading(true);
-      const response = await http.get(`/categories/get-all?p=${page}&p_size=${pageSize}`);
-      const data = await response.data;
-      setCategoriesData(data);
-      setLoading(false);
-    };
-
     loadCategoriesData();
   }, [page]);
 
-  useEffect(()=>{
-    const loadTotalPage = async () => {
-      const response = await http.get("/categories/count-record");
-      const data = await response.data;
-  
-      let totalPageNew = Math.ceil(data / pageSize);
-  
-      setTotalPage(totalPageNew);
-    }
+  // useEffect(() => {
 
+
+  //   loadTotalPage();
+  // }, [])
+
+  useEffect(() => {
+
+    if (page === 1)
+      loadCategoriesData();
+    else {
+      setPage(1);
+    }
     loadTotalPage();
-  }, [])
+
+  }, [search])
 
   const handleChangePage = number => {
     setPage(number);
   };
 
   const handleChangeAttrCategory = (attribute) => {
-    setAttrCategory(prev=>({...prev, ...attribute}));
+    setAttrCategory(prev => ({ ...prev, ...attribute }));
   }
 
   const handleToggle = (event, nodeIds) => {
@@ -164,14 +183,54 @@ const CategoriesPage = () => {
     setFileList(files);
   }
 
-  const toggleAction = (id, mode)=>{
-    setModalAction(prev=>({id: id, mode: mode, visible: !prev.visible}))
+  const toggleAction = (id, mode) => {
+    setModalAction(prev => ({ id: id, mode: mode, visible: !prev.visible }))
   }
 
-  const handleChangeTitle = title=>{
+  const handleChangeTitle = title => {
     console.log("change tile")
-    if(title==="edit")
-      setModalAction(prev=>({...prev, mode: title}))
+    if (title === "edit")
+      setModalAction(prev => ({ ...prev, mode: title }))
+  }
+
+  const handleClickCreate = async () => {
+
+    const formData = new FormData();
+    formData.append("name", attrCategory.name);
+    formData.append("path", attrCategory.path);
+    formData.append("parentId", selected);
+    if (fileList[0].filename !== null) formData.append("icon", fileList[0].filename)
+
+    const response = await http.post("/category/create-new", formData);
+    const data = await response.data;
+
+    swal({
+      title: `${data}`,
+      // text: "Nếu đồng ý thì mọi thay đổi sẽ biến mất.",
+      icon: "success",
+      buttons: {
+        ok: "Đồng ý",
+      },
+      // dangerMode: true,
+    }).then((value) => {
+      if (value === 'ok') {
+        // loadOrderDetail();
+        // props.reloadPage();
+        setAttrCategory({ name: '', path: '' });
+        setFileList([]);
+        setSelected([]);
+      }
+    });
+  }
+
+
+  const handleReloadPage = ()=>{
+    loadCategoriesData();
+  }
+
+  const handleCloseModal = ()=>{
+    console.log("close")
+    setModalAction(prev=>({...prev, visible: !prev.visible}))
   }
 
 
@@ -245,6 +304,7 @@ const CategoriesPage = () => {
                     <CInputFile
                       id={`file-input-category`}
                       name={`file-input-category`}
+                      value={[]}
                       custom
                       hidden
                       onChange={(e) => { fileChanged(e) }}
@@ -293,10 +353,11 @@ const CategoriesPage = () => {
                     </div>
                   </CFormGroup>
                   <FormGroup>
-                    <CButton type="button" size="lg" color="primary" style={{ marginRight: 10 }} className="btn-create"><CIcon name="cil-plus" style={{ paddingRight: 2 }} />Tạo danh mục</CButton>
+                    <CButton onClick={handleClickCreate} size="lg" color="primary" style={{ marginRight: 10 }} className="btn-create"><CIcon name="cil-plus" style={{ paddingRight: 2 }} />Tạo danh mục</CButton>
                   </FormGroup>
                 </CCol>
                 <CCol xs="12" sm="12" md="8">
+                  <CInput style={{ padding: 10, marginBottom: 20, height: 'auto' }} size="normal" id="searchCategory" name="searchCategory" placeholder="Tìm kiếm tên danh mục..." value={search} onChange={handleSearch} />
                   <CDataTable
                     style={{ marginBottom: 0 }}
                     loading={loading}
@@ -309,15 +370,15 @@ const CategoriesPage = () => {
                     scopedSlots={{
                       'action':
                         (item, i) => (
-                          <td className="td-middle" style={{borderTop: i===0?0:'1px solid #d8dbe0'}}>
+                          <td className="td-middle" style={{ borderTop: i === 0 ? 0 : '1px solid #d8dbe0' }}>
                             <CDropdown className="m-1">
                               <CDropdownToggle color="white dropdown-table" size="lg" />
                               {/* <IconButton style={{ outline: 'none' }} title="Xem chi tiết" onClick={() => { toggleEdit(item.id, "detail") }}> */}
                               {/* <VisibilityOutlinedIcon style={{ fontSize: 20 }} /> */}
                               {/* </IconButton> */}
                               <CDropdownMenu>
-                                <CDropdownItem onClick={()=>{toggleAction(item.id, "detail")}}>Xem chi tiết</CDropdownItem>
-                                <CDropdownItem onClick={()=>{toggleAction(item.id, "edit")}}>Chỉnh sửa</CDropdownItem>
+                                <CDropdownItem onClick={() => { toggleAction(item.id, "detail") }}>Xem chi tiết</CDropdownItem>
+                                <CDropdownItem onClick={() => { toggleAction(item.id, "edit") }}>Chỉnh sửa</CDropdownItem>
                               </CDropdownMenu>
                             </CDropdown>
                           </td>
@@ -367,7 +428,7 @@ const CategoriesPage = () => {
                   <CButton onClick={toggleAction}><CIcon name='cil-x' size="sm" /></CButton>
                 </CModalHeader>
                 <CModalBody>
-                  <EditCategory categoryId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle}/>
+                  <EditCategory closeModal={handleCloseModal} reloadPage={handleReloadPage} categoryId={modalAction.id} mode={modalAction.mode} handleChangeTitle={handleChangeTitle} />
                 </CModalBody>
                 <CModalFooter>
                   <CButton color="secondary" onClick={toggleAction}>Đóng</CButton>

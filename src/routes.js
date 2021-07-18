@@ -42,11 +42,15 @@ const AddNewProducts = React.lazy(() => import("./views/products/AddNewProduct")
 const CategoriesPage = React.lazy(() => import("./views/products/Categories"));
 const BrandsProductPage = React.lazy(() => import("./views/products/Brands"));
 const AllOrders = React.lazy(() => import("./views/orders/AllOrders"));
-const UserPage = React.lazy(()=>import("./views/users"));
-const InfoAdmin = React.lazy(()=>import("./views/Admin"));
+const UserPage = React.lazy(() => import("./views/users"));
+const InfoAdmin = React.lazy(() => import("./views/Admin"));
+const FlashSale = React.lazy(() => import("./views/FlashSale"))
+const AddProductFlashSale = React.lazy(() => import("./views/FlashSale/Add Product"));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
+  { path: '/profile/user', name: 'Profile', component: InfoAdmin },
+
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
@@ -96,7 +100,10 @@ const routes = [
   { path: '/orders/all', name: 'All Orders', component: AllOrders },
 
   { path: '/users', name: 'All Users', component: UserPage },
-  { path: '/setttings/profile', name: 'Settings', component: InfoAdmin }
+
+  { path: '/flashsale/list', name: 'Flash Sale', component: FlashSale },
+
+  { path: '/flashsale/add', name: 'Sửa flash sale', component: AddProductFlashSale }
 
 ];
 
